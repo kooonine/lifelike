@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="imagetoolbar" content="no">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <title>LG유플러스 전자결제 샘플 페이지</title>
+</head>
+<body>
+    <form method="post" id="LGD_PAYINFO" action="ARSReserve.php">
+        <table>	
+            <tr>
+                <td>상점아이디(t를 제외한 아이디) </td>
+                <td><input type="text" name="CST_MID" value=""/></td>
+            </tr>
+            <tr>
+                <td>test, service </td>
+                <td><input type="text" name="CST_PLATFORM" value="service"/></td>
+            </tr>
+            <tr>
+                <td>요청타입(Create, Update, Search) </td>
+                <td>
+                <select name="LGD_REQTYPE" style="width:153px;">
+					<option value="Create">예약 등록</option>
+					<option value="Update">예약 변경</option>
+					<option value="Search">예약 조회</option>
+				</select>
+                </td>
+            </tr>			
+            <tr>
+                <td>예약번호 </td>
+                <td><input type="text" name="LGD_RESERVENUMBER" value="1234567890"/></td>
+            </tr>
+			<tr>
+                <td>결제금액 </td>
+                <td><input type="text" name="LGD_AMOUNT" value="1004"/></td>
+            </tr>
+            <tr>
+                <td>고객 핸드폰 번호</td>
+                <td><input type="text" name="LGD_BUYERPHONE" value=""/></td>
+            </tr>
+            <tr>
+                <td>고객 SMS 발송 상품명 </td>
+                <td><input type="text" name="LGD_PRODUCTINFO" value="제주도 2박3일"/></td>
+            </tr>
+            <tr>
+                <td>ARS 결제번호 </td>
+                <td><input type="text" name="LGD_CALLBACK" value=""/></td>
+            </tr>
+            <tr>
+                <td>예약일자 </td>
+                <td><input type="text" name="LGD_RESERVEDATE" value="20100515"/></td>
+            </tr>
+            <tr>
+                <td>예약만료일자 </td>
+                <td><input type="text" name="LGD_EXPIREDATE" value="20101231"/></td>
+            </tr>
+            <tr>
+                <td>결제결과 전송 상점 URL </td>
+                <td><input type="text" name="LGD_NOTEURL" value="http://localhost/adm/shop_admin/lg_ars/note_url.php"/></td>
+            </tr>
+            <tr>
+                <td>예외상점 전용 파라미터  </td>
+                <td><input type="text" name="LGD_EX_PARAM" value=""/></td>
+            </tr>    
+            <tr>
+                <td>사용여부 </td>
+                <td><input type="text" name="LGD_STATUS" value="Y"/></td>
+            </tr>
+      </table>
+		<input type="submit" value="요청하기" /><br/>
+    </form>
+</body>
+</html>

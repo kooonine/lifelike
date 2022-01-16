@@ -1,0 +1,694 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="imagetoolbar" content="no">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<title>게시판 관리 | LITANDARD</title>
+<link rel="stylesheet" href="./css/admin.css">
+
+<!--[if lte IE 8]>
+<script src="../js/html5.js"></script>
+<![endif]-->
+<script>
+// 자바스크립트에서 사용하는 전역변수 선언
+var g5_url       = "http://litandard.letzdev.com";
+var g5_bbs_url   = "../bbs";
+var g5_is_member = "1";
+var g5_is_admin  = "super";
+var g5_is_mobile = "";
+var g5_bo_table  = "";
+var g5_sca       = "";
+var g5_editor    = "";
+var g5_cookie_domain = "";
+var g5_admin_url = ".";
+</script>
+
+
+<!-- Bootstrap -->
+<link href="./vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="./vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="./vendors/nprogress/nprogress.css" rel="stylesheet">
+
+<!-- Custom Theme Style -->
+<link href="./css/custom.min.css" rel="stylesheet">
+<!-- iCheck -->
+<link href="./vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+<!-- bootstrap-progressbar -->
+<link href="./vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="./vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="./vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="./vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="./vendors/nprogress/nprogress.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="./vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- iCheck -->
+<script src="./vendors/iCheck/icheck.min.js"></script>
+
+
+<script src="../js/common.js?ver=171222"></script>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+</head>
+<body class="nav-md" >
+
+<script>
+var tempX = 0;
+var tempY = 0;
+
+function imageview(id, w, h)
+{
+
+    menu(id);
+
+    var el_id = document.getElementById(id);
+
+    //submenu = eval(name+".style");
+    submenu = el_id.style;
+    submenu.left = tempX - ( w + 11 );
+    submenu.top  = tempY - ( h / 2 );
+
+    selectBoxVisible();
+
+    if (el_id.style.display != 'none')
+        selectBoxHidden(id);
+}
+</script>
+
+	<div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+				<a href="." class="site_title">LITANDARD 관리자</a>
+            </div>
+
+			<div class="clearfix"></div>
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+
+              <div class="menu_section">
+                <ul class="nav side-menu">
+
+                  <li><a> 환경설정 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./config_form.php" >기본환경설정</a></li><li><a href="./auth_list.php" >관리권한설정</a></li><li><a href="./theme.php" >테마설정</a></li><li><a href="./menu_list.php" >메뉴설정</a></li><li><a href="./sendmail_test.php" >메일 테스트</a></li><li><a href="./newwinlist.php" >팝업레이어관리</a></li><li><a href="./session_file_delete.php" >세션파일 일괄삭제</a></li><li><a href="./cache_file_delete.php" >캐시파일 일괄삭제</a></li><li><a href="./captcha_file_delete.php" >캡챠파일 일괄삭제</a></li><li><a href="./thumbnail_file_delete.php" >썸네일파일 일괄삭제</a></li><li><a href="./phpinfo.php" >phpinfo()</a></li><li><a href="./browscap.php" >Browscap 업데이트</a></li><li><a href="./browscap_convert.php" >접속로그 변환</a></li><li><a href="./dbupgrade.php" >DB업그레이드</a></li><li><a href="./service.php" >부가서비스</a></li></ul>				  </li>
+
+                  <li><a> 환경설정관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>기본환경설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_biz.php">사업자정보</a></li><li><a href="./configform_pwd.php">비밀번호변경</a></li><li><a href="./configform_stipulation.php">이용약관설정</a></li><li><a href="./configform_etc.php">기타이용안내설정</a></li><li><a href="./configform_privacy.php">개인정보제공설정</a></li></ul></li><li><a>사이트환경관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_ip.php">IP접속제한관리</a></li><li><a href="./configformip_visit.php">방문자분석</a></li><li><a href="./configform_search.php">검색엔진 최적화</a></li><li><a href="./configform_mail.php">메일발송환경설정</a></li></ul></li><li><a>회원등급관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_usergrade.php">회원등급설정</a></li></ul></li><li><a>결제정보관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_payment.php">결제방식설정</a></li><li><a href="./configform_cash.php">현금영수증서비스</a></li><li><a href="./configform_tax.php">세금계산서서비스</a></li></ul></li><li><a>배송관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_delivery.php">배송/반품설정</a></li><li><a href="./configform_deliverycompany.php">배송업체관리</a></li></ul></li><li><a>관리자 권한설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_admin.php">관리자 리스트</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./member_list.php" >회원관리</a></li><li><a href="./mail_list.php" >회원메일발송</a></li><li><a href="./visit_list.php" >접속자집계</a></li><li><a href="./visit_search.php" >접속자검색</a></li><li><a href="./visit_delete.php" >접속자로그삭제</a></li><li><a href="./point_list.php" >포인트관리</a></li><li><a href="./poll_list.php" >투표관리</a></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>회원설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_config.php">회원가입항목설정</a></li></ul></li><li><a>회원정보 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_list.php">회원정보조회</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 게시판관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./board_list.php" >게시판관리</a></li><li><a href="./boardgroup_list.php" >게시판그룹관리</a></li><li><a href="./popular_list.php" >인기검색어관리</a></li><li><a href="./popular_rank.php" >인기검색어순위</a></li><li><a href="./qa_config.php" >1:1문의설정</a></li><li><a href="./contentlist.php" >내용관리</a></li><li><a href="./faqmasterlist.php" >FAQ관리</a></li><li><a href="./write_count.php" >글,댓글 현황</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/configform.php" >쇼핑몰설정</a></li><li><a href="./shop_admin/orderlist.php" >주문내역</a></li><li><a href="./shop_admin/personalpaylist.php" >개인결제관리</a></li><li><a href="./shop_admin/categorylist.php" >분류관리</a></li><li><a href="./shop_admin/itemlist.php" >상품관리</a></li><li><a href="./shop_admin/itemqalist.php" >상품문의</a></li><li><a href="./shop_admin/itemuselist.php" >사용후기</a></li><li><a href="./shop_admin/itemstocklist.php" >상품재고관리</a></li><li><a href="./shop_admin/itemtypelist.php" >상품유형관리</a></li><li><a href="./shop_admin/optionstocklist.php" >상품옵션재고관리</a></li><li><a href="./shop_admin/couponlist.php" >쿠폰관리</a></li><li><a href="./shop_admin/couponzonelist.php" >쿠폰존관리</a></li><li><a href="./shop_admin/sendcostlist.php" >추가배송비관리</a></li><li><a href="./shop_admin/inorderlist.php" >미완료주문</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰현황/기타 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/sale1.php" >매출현황</a></li><li><a href="./shop_admin/itemsellrank.php" >상품판매순위</a></li><li><a href="./shop_admin/orderprint.php" >주문내역출력</a></li><li><a href="./shop_admin/itemstocksms.php" >재입고SMS알림</a></li><li><a href="./shop_admin/itemevent.php" >이벤트관리</a></li><li><a href="./shop_admin/itemeventlist.php" >이벤트일괄처리</a></li><li><a href="./shop_admin/bannerlist.php" >배너관리</a></li><li><a href="./shop_admin/wishlist.php" >보관함현황</a></li><li><a href="./shop_admin/price.php" >가격비교사이트</a></li></ul>				  </li>
+
+                  <li><a> SMS 관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./sms_admin/config.php" >SMS 기본설정</a></li><li><a href="./sms_admin/member_update.php" >회원정보업데이트</a></li><li><a href="./sms_admin/sms_write.php" >문자 보내기</a></li><li><a href="./sms_admin/history_list.php" >전송내역-건별</a></li><li><a href="./sms_admin/history_num.php" >전송내역-번호별</a></li><li><a href="./sms_admin/form_group.php" >이모티콘 그룹</a></li><li><a href="./sms_admin/form_list.php" >이모티콘 관리</a></li><li><a href="./sms_admin/num_group.php" >휴대전화번호 그룹</a></li><li><a href="./sms_admin/num_book.php" >휴대전화번호 관리</a></li><li><a href="./sms_admin/num_book_file.php" >휴대전화번호 파일</a></li></ul>				  </li>
+				                </ul>
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+			 -->
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+		<!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+
+                <li class="" id="tnb_logout"><a href="../bbs/logout.php">로그아웃</a></li>
+				<li class=""><a href="../" class="tnb_shop" target="_blank" title="쇼핑몰 바로가기">쇼핑몰 이동</a></li>
+				<li class=""><a href="./member_form.php?w=u&amp;mb_id=admin">관리자정보</a></li>
+				<li class=""><a href="javascript:;">최고관리자 님</a></li>
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+<script>
+jQuery(function($){
+
+    var menu_cookie_key = 'g5_admin_btn_gnb';
+
+    $(".tnb_mb_btn").click(function(){
+        $(".tnb_mb_area").toggle();
+    });
+
+    $("#btn_gnb").click(function(){
+
+        var $this = $(this);
+
+        try {
+            if( ! $this.hasClass("btn_gnb_open") ){
+                set_cookie(menu_cookie_key, 1, 60*60*24*365);
+            } else {
+                delete_cookie(menu_cookie_key);
+            }
+        }
+        catch(err) {
+        }
+
+        $("#container").toggleClass("container-small");
+        $("#gnb").toggleClass("gnb_small");
+        $this.toggleClass("btn_gnb_open");
+
+    });
+
+    $(".gnb_ul li .btn_op" ).click(function() {
+        $(this).parent().addClass("on").siblings().removeClass("on");
+    });
+
+});
+</script>
+
+		<!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>게시판 관리</h3>
+              </div>
+
+			  <div class="title_right">
+                <div class="col-md-7 col-sm-5 col-xs-12 pull-right">
+	                <h5> 메인 > 커뮤니티관리 > 게시판관리 > 게시판통합관리 </h5>
+                </div>
+              </div>
+
+
+            </div>
+            <div class="clearfix"></div>
+
+
+
+
+
+<!-- @START@ 내용부분 시작 -->
+
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+	<div class="x_panel">
+
+	<!-- <form name="fboardlist" id="fboardlist" method="post" onsubmit="return fboardlist_submit(this);" data-parsley-validate class="form-horizontal form-label-left"> -->
+	<input type="hidden" name="token" value="" id="token">
+
+	  <div class="x_title">
+		<h2><span class="fa fa-check-square"></span> 게시판 목록<small></small></h2>
+		<label class="nav navbar-right"></label>
+		<div class="clearfix"></div>
+	  </div>
+
+	  <div class="x_content">
+      <div class="tbl_head01 tbl_wrap" style="margin-bottom: 50px">
+        <table>
+        <thead>
+        <tr>
+          <th colspan="7" style="text-align: right;">
+            <button class="btn btn_03" type="button" id="btn_delete_board">삭제</button>
+            <a href="board_create.html"><button class="btn btn_03" type="button">게시판 생성</button></a>
+          </th>
+        </tr>
+        <tr>
+          <th scope="col">
+              <label for="chkall" class="sound_only">게시판 전체</label>
+              <input type="checkbox" name="chkall" value="1" id="chkall" onclick="check_all(this.form)">
+          </th>
+          <th scope="col">카테고리 분류</th>
+          <th scope="col">게시판 제목</th>
+          <th scope="col">권한(쓰기/읽기)</th>
+          <th scope="col">새글/총갯수</th>
+          <th scope="col">게시판 관리</th>
+          <th scope="col">사용여부</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+          <td class="td_chk">
+            <input type="checkbox" name="chk[]" value="<?php echo $i ?>" id="chk_01">
+          </td>
+          <td class="td_category2">커뮤니티</td>
+          <td class="td_left">
+            <a href="board_create.html?board=tester">체험단</a>
+          </td>
+          <td class="td_auth">관리자/비회원</td>
+          <td class="td_cnt">00/00</td>
+          <td class="td_odrnum">
+            <button class="btn btn_02" type="button" id="btn_view_post_list">목록보기</button>
+            <a href="post_create.html?board=tester"><button class="btn btn_02" type="button">글등록</button></a>
+            <button class="btn btn_02" type="button" id="btn_manage_banner" data-toggle="modal" data-target="#modal_banner">배너관리</button>
+          </td>
+          <td class="td_etc">사용</td>
+        </tr>
+        </tbody>
+
+        <tfoot>
+          <tr>
+            <th colspan="7" style="text-align: right;">
+              <button class="btn btn_03" type="button" id="btn_delete_board">삭제</button>
+              <a href="board_create.html"><button class="btn btn_03" type="button">게시판 생성</button></a>
+            </th>
+          </tr>
+        </tfoot>
+        </table>
+      </div>
+    </div>
+
+
+	  <div class="x_title">
+		<h2><span class="fa fa-check-square"></span> 게시글 목록 <small></small></h2>
+		<label class="nav navbar-right"></label>
+		<div class="clearfix"></div>
+	  </div>
+
+	  <div class="x_content">
+      <div class="tbl_head01 tbl_wrap hidden" id="divPostList" style="margin-bottom: 50px">
+        <table>
+        <thead>
+        <tr>
+          <th scope="col">번호</th>
+          <th scope="col">구분</th>
+          <th scope="col">제목</th>
+          <th scope="col">작성자</th>
+          <th scope="col">작성일</th>
+          <th scope="col">조회</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr>
+          <td class="td_num">01</td>
+          <td class="td_category2">비공개</td>
+          <td class="td_left"><a href="post_update.html?board=test">texttexttexttexttexttexttexttext</a></td>
+          <td class="td_id">김빛나리(asdfasdf1234)</td>
+          <td class="td_datetime">2019-01-01</td>
+          <td class="td_cnt">9768</td>
+        </tr>
+        </tbody>
+        </table>
+
+        <nav style="text-align: center;">
+	        <ul class="pagination">
+	        <li><a href="#"><span aria-hidden="true">«</span><span class="sr-only">Previous</span></a></li>
+	        <li><a href="#">1</a></li>
+	        <li><a href="#">2</a></li>
+	        <li><a href="#">3</a></li>
+	        <li><a href="#">4</a></li>
+	        <li><a href="#">5</a></li>
+	        <li><a href="#"><span aria-hidden="true">»</span><span class="sr-only">Next</span></a></li>
+	        </ul>
+	      </nav>
+      </div>
+	  </div>
+
+	  <!-- <div class="x_content">
+		  <div class="form-group">
+			<div class="col-md-12 col-sm-12 col-xs-12 text-right">
+			  <input type="submit" class="btn btn-success" value="저장"></input>
+			</div>
+		  </div>
+	  </div> -->
+
+	<!-- </form> -->
+
+	</div>
+
+  </div>
+
+
+  <!-- Modal : 배너 관리-->
+  <form name="fmodalbanner" id="fmodalbanner" method="post" onsubmit="return fmodalbanner_submit(this);" data-parsley-validate class="form-horizontal form-label-left">
+  <div id="modal_banner" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">배너관리 팝업</h4>
+    </div>
+    <div class="modal-body">
+      <h4><span class="fa fa-check-square"></span> 체험단 배너관리 <small></small></h4>
+        <div class="tbl_frm01 tbl_wrap">
+            <table>
+            <tbody>
+              <tr>
+                  <th scope="row">배너 수량</th>
+                  <td colspan="2">
+                    <input type="radio" checked="" value="1" id="rdo_banner_count1" name="rdo_banner_count"> 1개 &nbsp;
+                    <input type="radio" value="2" id="rdo_banner_count2" name="rdo_banner_count"> 2개 &nbsp;
+                    <input type="radio" value="3" id="rdo_banner_count3" name="rdo_banner_count"> 3개
+                  </td>
+              </tr>
+            </tbody>
+            </table>
+          </br>
+            <table id="tbl_banner1">
+            <tbody>
+              <tr>
+                <th scope="row" colspan="2" style="text-align: center;">배너1</th>
+              </tr>
+            <tr>
+                <th scope="row">전시순서</th>
+                <td colspan="2">
+                  <select id="banner_order1" name="banner_order">
+                      <option value="1">순서1</option>
+                      <option value="2">순서2</option>
+                      <option value="3">순서3</option>
+                  </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">이미지 등록</th>
+                <td colspan="2">
+                <img src="./img/theme_img.jpg" class="img-thumbnail" style="width: 50%; height: 30%;">&nbsp;
+                <button class="btn btn_03" type="button" name="btn_add_image" id="btn_add_image1" data-toggle="modal" data-target="#modal_banner_img">이미지 등록</button>
+                <button class="btn btn_03 hidden" type="button" name="btn_update_image" id="btn_update_image1" data-toggle="modal" data-target="#modal_banner_img">수정</button>
+                <button class="btn btn-default hidden" type="button" name="btn_delete_image" id="btn_delete_image1">삭제</button><br />
+                  * 업로드 이미지 사이즈 (000px * 000px) <br />
+                  * 최대 0,000KB / 확장자 jpg, png만 가능
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">URL</th>
+                <td colspan="2">
+                  <input type="text" name="txt_banner_url" value="" id="txt_banner_url1" required class="required frm_input" size="50">
+                </td>
+            </tr>
+            </tbody>
+            </table>
+          </br>
+            <table hidden id="tbl_banner2">
+            <tbody>
+              <tr>
+                <th scope="row" colspan="2" style="text-align: center;">배너2</th>
+              </tr>
+            <tr>
+                <th scope="row">전시순서</th>
+                <td colspan="2">
+                  <select id="banner_order2" name="banner_order">
+                      <option value="1">순서1</option>
+                      <option value="2">순서2</option>
+                      <option value="3">순서3</option>
+                  </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">이미지 등록</th>
+                <td colspan="2">
+                <img src="./img/theme_img.jpg" class="img-thumbnail" style="width: 50%; height: 30%;">&nbsp;
+                <button class="btn btn_03" type="button" name="btn_add_image" id="btn_add_image2" data-toggle="modal" data-target="#modal_banner_img">이미지 등록</button>
+                <button class="btn btn_03 hidden" type="button" name="btn_update_image" id="btn_update_image2" data-toggle="modal" data-target="#modal_banner_img">수정</button>
+                <button class="btn btn-default hidden" type="button" name="btn_delete_image" id="btn_delete_image2">삭제</button><br />
+                  * 업로드 이미지 사이즈 (000px * 000px) <br />
+                  * 최대 0,000KB / 확장자 jpg, png만 가능
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">URL</th>
+                <td colspan="2">
+                  <input type="text" name="txt_banner_url" value="" id="txt_banner_url2" required class="required frm_input" size="50">
+                </td>
+            </tr>
+            </tbody>
+            </table>
+          </br>
+            <table hidden id="tbl_banner3">
+            <tbody>
+              <tr>
+                <th scope="row" colspan="2" style="text-align: center;">배너3</th>
+              </tr>
+            <tr>
+                <th scope="row">전시순서</th>
+                <td colspan="2">
+                  <select id="banner_order3" name="banner_order">
+                      <option value="1">순서1</option>
+                      <option value="2">순서2</option>
+                      <option value="3">순서3</option>
+                  </select>
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">이미지 등록</th>
+                <td colspan="2">
+                <img src="./img/theme_img.jpg" class="img-thumbnail" style="width: 50%; height: 30%;">&nbsp;
+                <button class="btn btn_03" type="button" name="btn_add_image" id="btn_add_image3" data-toggle="modal" data-target="#modal_banner_img">이미지 등록</button>
+                <button class="btn btn_03 hidden" type="button" name="btn_update_image" id="btn_update_image3" data-toggle="modal" data-target="#modal_banner_img">수정</button>
+                <button class="btn btn-default hidden" type="button" name="btn_delete_image" id="btn_delete_image3">삭제</button><br />
+                  * 업로드 이미지 사이즈 (000px * 000px) <br />
+                  * 최대 0,000KB / 확장자 jpg, png만 가능
+                </td>
+            </tr>
+            <tr>
+                <th scope="row">URL</th>
+                <td colspan="2">
+                  <input type="text" name="txt_banner_url" value="" id="txt_banner_url3" required class="required frm_input" size="50">
+                </td>
+            </tr>
+            </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="modal-footer">
+      <input type="submit" class="btn btn-success" value="등록"></input>
+      <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+    </div>
+  </div>
+
+  </div>
+  </div>
+</form>
+
+
+  <!-- Modal : 이미지 등록 -->
+  <form name="fmodalbannerimg" id="fmodalbannerimg" method="post" onsubmit="return fmodalbannerimg_submit(this);" data-parsley-validate class="form-horizontal form-label-left">
+  <div id="modal_banner_img" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+  <!-- Modal content-->
+  <div class="modal-content">
+    <div class="modal-header">
+      <button type="button" class="close" data-dismiss="modal">&times;</button>
+      <h4 class="modal-title">이미지 등록</h4>
+    </div>
+    <div class="modal-body">
+
+            <table>
+            <tbody>
+              <tr>
+                  <th scope="row">
+                    <img src="./img/theme_img.jpg" class="img-thumbnail">
+                  </th>
+                  <td colspan="2" style="padding: 10px">
+                    <input type="file" accept="image/*"></input><br />
+                      사이즈 000px * 000px <br />
+                      파일용량 0,000KB <br />
+                      확장자 : jpg, png
+                  </td>
+              </tr>
+            </tbody>
+            </table>
+
+    </div>
+    <div class="modal-footer">
+      <input type="submit" class="btn btn-success" value="제출하기"></input>
+      <button type="button" class="btn btn-default" data-dismiss="modal">취소</button>
+    </div>
+  </div>
+
+  </div>
+  </div>
+</form>
+
+</div>
+<script>
+
+
+<!-- 버튼 이벤트 -->
+
+$("#btn_delete_board").click(function(){
+
+  if ( confirm("게시판을 삭제하시겠습니까?") ) {
+    //선택한 게시판 삭제
+  }
+
+});
+
+$("#btn_view_post_list").click(function(){
+
+  $("#divPostList").removeClass("hidden");
+  //게시글 목록 데이터 받아서 뿌리기
+
+});
+
+$('input[type="radio"][name="rdo_banner_count"]').click(function(){
+
+  if($("#rdo_banner_count1").prop('checked')) {
+    $("#tbl_banner2").prop('hidden', true);
+    $("#tbl_banner3").prop('hidden', true);
+  }
+  else if ($("#rdo_banner_count2").prop('checked')) {
+    $("#tbl_banner2").prop('hidden', false);
+    $("#tbl_banner3").prop('hidden', true);
+  }
+  else {
+    $("#tbl_banner2").prop('hidden', false);
+    $("#tbl_banner3").prop('hidden', false);
+  }
+
+});
+//
+// function fboardlist_submit(f)
+// {
+//     //게시판 목록 form submit
+// }
+
+function fmodalbanner_submit(f)
+{
+    //배너관리 팝업 form submit
+}
+
+function fmodalbannerimg_submit(f)
+{
+    //이미지 등록 form submit
+}
+</script>
+
+
+
+
+<!-- @END@ 내용부분 끝 -->
+
+
+			</div>
+        </div>
+        <!-- /page content -->
+
+		<!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Copyright &copy; litandard.letzdev.com. All rights reserved.
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+
+<script>
+$(".scroll_top").click(function(){
+     $("body,html").animate({scrollTop:0},400);
+})
+</script>
+
+<!-- <p>실행시간 : 0 -->
+
+<script src="./admin.js?ver=171222"></script>
+<script src="..js/jquery.anchorScroll.js?ver=171222"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="./js/custom.min.js"></script>
+
+<script>
+$(function(){
+
+    var admin_head_height = $("#hd_top").height() + $("#container_title").height() + 5;
+
+    $("a[href^='#']").anchorScroll({
+        scrollSpeed: 0, // scroll speed
+        offsetTop: admin_head_height, // offset for fixed top bars (defaults to 0)
+        onScroll: function () {
+          // callback on scroll start
+        },
+        scrollEnd: function () {
+          // callback on scroll end
+        }
+    });
+
+    var hide_menu = false;
+    var mouse_event = false;
+    var oldX = oldY = 0;
+
+    $(document).mousemove(function(e) {
+        if(oldX == 0) {
+            oldX = e.pageX;
+            oldY = e.pageY;
+        }
+
+        if(oldX != e.pageX || oldY != e.pageY) {
+            mouse_event = true;
+        }
+    });
+
+
+});
+
+</script>
+
+
+<!-- <div style='float:left; text-align:center;'>RUN TIME : 0<br></div> -->
+<!-- ie6,7에서 사이드뷰가 게시판 목록에서 아래 사이드뷰에 가려지는 현상 수정 -->
+<!--[if lte IE 7]>
+<script>
+$(function() {
+    var $sv_use = $(".sv_use");
+    var count = $sv_use.length;
+
+    $sv_use.each(function() {
+        $(this).css("z-index", count);
+        $(this).css("position", "relative");
+        count = count - 1;
+    });
+});
+</script>
+<![endif]-->
+
+</body>
+</html>

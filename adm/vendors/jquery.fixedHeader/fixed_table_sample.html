@@ -1,0 +1,131 @@
+﻿
+<style>
+        th, td {
+            white-space: nowrap;
+        }
+
+        div.dataTables_wrapper {
+            width: 100%;
+            margin: 0 auto;
+        }
+        table.dataTable tr, td{
+            border: 1px solid lightgray;
+        }
+        table.dataTable tr > td{
+            border: 1px solid lightgray;
+        }
+            table.dataTable tr > th {
+                border: 1px solid lightgray;
+                background:#eeeeee;
+            }
+        /*table.dataTable thead > tr > td {
+            width: 80px;
+        }*/
+    </style>
+<link rel="stylesheet" href="./fixed_table.css">
+
+
+<table id="reportTb" class="display" style="width:100%">
+        <thead>
+            <tr>
+                <th><input type="checkbox"></th>
+                <th>물류처</th>
+                <th>물류상태</th>
+                <th>수취인명</th>
+                <th>연락처</th>
+                <th>연락처</th>
+                <th>우편번호</th>
+                <th>주소</th>
+                <th>삼진품목명</th>
+                <th>색상</th>
+                <th>사이즈</th>
+                <th>주문수량</th>
+                <th>박스수량</th>
+                <th>타입</th>
+                <th>운밈</th>
+                <th>배송요청사항</th>
+                <th>보내는분</th>
+                <th>보내는분연락처</th>
+                <th>주소</th>
+                <th>고객주문번호</th>
+                <th>삼진코드</th>
+                <th>택배사코드</th>
+                <th>송장번호</th>
+            </tr>
+        </thead>
+        <tbody id="revenue-status">
+            <tr>
+                <td><input type="checkbox"></td>
+                <td>경민실업</td>
+                <td>정상</td>
+                <td>홍길동</td>
+                <td>000-0000-0000</td>
+                <td>0000-0000-0000</td>
+                <td>000-000</td>
+                <td>[036-90] 서울특별시 서대문구 154(북가좌동, 북가좌삼호아파트) 13동 704호</td>
+                <td>비앙코(WH)구스베개솜*4</td>
+                <td>블랙(BK)</td>
+                <td>S</td>
+                <td>4</td>
+                <td>1</td>
+                <td>-</td>
+                <td>-</td>
+                <td>문앞</td>
+                <td>리탠다드</td>
+                <td>02-3494-7641</td>
+                <td>인천 서구 가좌동 585-49 CJ대한통운 내 경민실업</td>
+                <td>21777225</td>
+                <td>MOS20AC26D11</td>
+                <td>003</td>
+                <td>635978971234</td>
+            </tr>
+            
+        </tbody>
+    </table>
+
+
+    
+    <script src="./fixed_table.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#reportTb').DataTable({
+                scrollY: "650px",
+                scrollX: true,
+                scrollCollapse: true,
+                ordering: false,
+                info: false,
+                paging: false,
+                searching: false,
+                createdRow: function (row, data, dataIndex) {
+
+                    //ROWSPAN
+                    if (dataIndex == 0) {
+                        $('td:eq(0)', row).attr('rowspan', 9);
+                    }
+                    else {
+                        if (data[1] === '대한항공') {
+                            $('td:eq(0)', row).attr('rowspan', 9);
+                        }
+                        else {
+                            $('td:eq(0)', row).css('display', 'none');
+                        }
+                    }
+                    //COLSPAN
+                    if (data[1] === '합계') {
+                        $('td:eq(1)', row).attr('colspan', 2);
+                    }
+
+                    //CSS셋팅
+                    $('td:not(:eq(0))', row).css('text-align', 'right');
+                    $('td:eq(0)', row).css('text-align', 'center');
+                    $('td:eq(1)', row).css('text-align', 'center');
+
+                },
+                fixedColumns: {
+                    leftColumns: 4
+                }
+
+            });
+        });
+    </script>

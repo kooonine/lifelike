@@ -1,0 +1,309 @@
+.spo_tbl{
+    width: 100%;
+    border: 1px solid #444444;
+    border-collapse: collapse;
+}
+th , td {
+    border: 1px solid #444444;
+}
+
+th {background-color: #f2f2f2 ;}
+
+#sit_tlb td {text-align: center;}
+
+
+.front_content {
+    width: 50%;
+}
+.btn-group {
+    text-align: center;
+    margin-top: 15px;
+}
+.btn-group0 {
+    text-align: left;
+    margin-top: 15px;
+}
+.btn-group0 button  {
+    border-radius: 5px;
+    border: 1px solid #000;
+    
+    
+}
+
+
+.btn-group .btn-success {
+    background-color: #376092;
+    color : #fff;
+    text-decoration: auto;
+    border-radius: 5px;
+    width: 80px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.btn-group0 .big-btn-success{
+    background-color: #376092;
+    color : #fff;
+    text-decoration: auto;
+    border-radius: 5px;
+    width: 300px;
+    height: 30px;
+    cursor: pointer;
+}
+.join_p{
+    width: 300px;
+}
+
+.join_p  button  {
+    float: right;
+    border-radius: 5px;
+    border: 1px solid #000;
+    width: 100px;
+    height: 25px;
+    cursor: pointer;
+}
+
+
+.join-b {width : 300px;}
+.join-b .login {height: 30px; line-height: 30px;}
+.join-b .login input{float: right; height: 30px;}
+
+.input_w_s{width : 30px;    }
+.input_w_n{width : 60px;     }
+.input_w_l{}
+.passTxt{width : 100px; display: inline-block;}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+
+
+.b2b_sio_ul li {
+    list-style: none;
+    display: inline-block;
+    padding: 10px 10px;
+}
+
+.b2b_sio_ul li .imgA img {
+    width: calc(100vw / 5);
+}
+.imgA{position: relative;}
+.imgA .dim{
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    padding-top : 45%;
+    font-size: 30px;
+    color : #000;
+}
+
+.biger-btn-a {
+    
+    margin-top: 60px;
+}
+
+.biger-btn-success{
+    background-color: #376092;
+    color : #fff;
+    text-decoration: auto;
+    border-radius: 5px;
+    width: 200px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+}
+.b2b-sio-input-a{
+    text-align: end;
+}
+.b2b-sio-input-chk{
+    zoom: 1.5;
+    margin: 5 0;
+}
+.b2b-sio-grid{
+    display: inline-block;
+}
+
+.b2b_sit_info_wrap{display: flex;}
+.b2b_sit_img img{
+    width: 200px;
+}
+.b2b_sit_info{width: 80%;}
+.sit_total_price{text-align: right; color : red; font-size: 20px; font-weight: 700;}
+.b2b_logo {width : 200px; margin-left: -10px;}
+.logout_btn{    display: inline-block;    vertical-align: top;    margin-top: 10px;}
+
+
+@media (min-width: 1366px) {
+    .on-small {
+        visibility: hidden;
+        display: none !important;
+    }
+    .on-big {
+        display: block !important;
+        visibility: visible;
+    }
+}
+
+@media (max-width: 1366px) {
+
+
+    .on-big {
+        visibility: hidden;
+        display: none !important;
+    }
+    .on-small {
+        display: block !important;
+        visibility: visible;
+    }
+    
+    .content { width: calc(100vw - 28px);}
+    .spo_tbl{
+        width: 100%;
+        border: 1px solid #444444;
+        border-collapse: collapse;
+        font-size: 14px;
+    }
+    .spo_tbl p {
+        margin: 4 0;
+    }
+    th , td {
+        border: 1px solid #444444;
+    }
+    
+    th {background-color: #f2f2f2 ;}
+    
+    #sit_tlb td {text-align: center;}
+    
+    
+    .front_content {
+        width: calc(100vw - 50px);
+        margin: 0 auto;
+    }
+    .btn-group {
+        text-align: center;
+        margin-top: 15px;
+    }
+    .btn-group0 {
+        text-align: left;
+        margin-top: 15px;
+    }
+    .btn-group0 button  {
+        border-radius: 5px;
+        border: 1px solid #000;
+        
+        
+    }
+    
+    
+    .btn-group .btn-success {
+        background-color: #376092;
+        color : #fff;
+        text-decoration: auto;
+        border-radius: 5px;
+        width: 80px;
+        height: 30px;
+        cursor: pointer;
+    }
+    
+    .btn-group0 .big-btn-success{
+        background-color: #376092;
+        color : #fff;
+        text-decoration: auto;
+        border-radius: 5px;
+        width: calc(100vw - 50px);
+        height: 30px;
+        cursor: pointer;
+    }
+    .join_p{
+        width: calc(100vw - 50px);
+    }
+    
+    .join_p  button  {
+        float: right;
+        border-radius: 5px;
+        border: 1px solid #000;
+        width: 100px;
+        height: 25px;
+        cursor: pointer;
+    }
+    
+    
+    .join-b {width : calc(100vw - 50px);; margin: 30px auto; font-size: 1rem;}
+    .join-b .login {height: 30px; line-height: 30px;}
+    .join-b .login input{float: right; height: 30px;}
+    
+    .input_w_s{width : 30px;    }
+    .input_w_n{width : 60px;     }
+    .input_w_l{}
+    .passTxt{width : 100px; display: inline-block;}
+    
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    
+    
+    .b2b_sio_ul {
+        width: calc(100vw - 50px);
+    }
+
+    .b2b_sio_ul li {
+        list-style: none;
+        display: inline-block;
+        padding: 10px 10px;
+        width: calc(100vw / 3);
+    }
+    
+    .b2b_sio_ul li .imgA img {
+        width: calc(100vw / 3);
+    }
+    .imgA{position: relative;}
+    .imgA .dim{
+        height: 100%;
+        position: absolute;
+        text-align: center;
+        width: 100%;
+    }
+    
+    .biger-btn-a {
+        
+        margin-top: 60px;
+    }
+    
+    .biger-btn-success{
+        background-color: #376092;
+        color : #fff;
+        text-decoration: auto;
+        border-radius: 5px;
+        width: 200px;
+        height: 50px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 0 auto;
+    }
+    .b2b-sio-input-a{
+        text-align: start;
+    }
+    .b2b-sio-input-chk{
+        zoom: 1.5;
+        margin: 5 0;
+    }
+    .b2b-sio-grid{
+        
+    }
+    
+    .b2b_sit_info_wrap{display: flex;}
+    .b2b_sit_img img{
+        width: 20vw;
+    }
+    .b2b_sit_info{width: 80%;}
+    .sit_total_price{text-align: right; color : red; font-size: 20px; font-weight: 700;}
+    .b2b_logo {width : 100%;}
+    .logout_btn{    display: inline-block;    vertical-align: top;    margin-top: 10px;}
+    
+
+}

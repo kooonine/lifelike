@@ -1,0 +1,920 @@
+<?php
+if (!defined('_GNUBOARD_')) exit;
+include_once(G5_LIB_PATH.'/json.lib.php');
+
+/*************************************************************************
+**
+**  삼진 연동 함수 모음
+**
+*************************************************************************/
+function mssql_sql_call($sp_name, $params)
+{
+    global $g5;
+    
+    if(OSWINDOWS) {
+        $connectionInfo = array( "Database"=>SAMJIN_MSSQL_DB, "UID"=>SAMJIN_MSSQL_USER, "PWD"=>SAMJIN_MSSQL_PASSWORD, "CharacterSet" => "UTF-8");
+        $rCon = @sqlsrv_connect( SAMJIN_MSSQL_HOST, $connectionInfo);
+        
+        $newparamstr = "";
+        $comma = "";
+        $newparams = array();
+        if(is_array($params)){
+            foreach ($params as $p) {
+                $newparams[] = array($p['var'], SQLSRV_PARAM_IN);
+                $newparamstr .= $comma.'?';
+                $comma = ",";
+            }
+        }
+        // 호출할 프로시져를 초기화 한다.
+        $result =  sqlsrv_query($rCon, "{CALL ".$sp_name."(".$newparamstr.")}", $newparams);
+        $row = mssql_sql_fetch_array($result);
+        
+        $json_params = json_encode($params);
+        $json_result = json_encode($row);
+        
+        sql_query("INSERT INTO lt_samjin_history (sp_name, params, result, regDate) VALUES ('$sp_name', '$json_params', '$json_result', '".G5_TIME_YMDHIS."')", true);
+        
+        return $row;
+        
+    } else {
+        
+        $rCon = @mssql_connect(SAMJIN_MSSQL_HOST, SAMJIN_MSSQL_USER, SAMJIN_MSSQL_PASSWORD);
+        mssql_sql_select_db(SAMJIN_MSSQL_DB,$rCon);
+        
+        mssql_query('SET ANSI_NULLS ON');
+        mssql_query('SET ANSI_WARNINGS ON');
+        
+        // 호출할 프로시져를 초기화 한다.
+        $stmt =  mssql_init($sp_name, $rCon);
+        if(is_array($params)){
+            foreach ($params as $p) {
+                mssql_bind($stmt, $p['param_name'], iconv("UTF-8","EUC-KR", $p['var']), $p['type']);
+            }
+        }
+        
+        // 프로시져를 실행한다.
+        $result = mssql_execute($stmt);
+        $row = mssql_sql_fetch_array($result);
+        // Statement 메모리를 해제 한다.
+        mssql_free_statement($stmt);
+        
+        // 접속을 끊는다.
+        mssql_close($rCon);
+        
+        $json_params = json_encode_raw($params);
+        $json_result = json_encode_raw($row);
+        
+        sql_query("INSERT INTO lt_samjin_history (sp_name, params, result, regDate) VALUES ('$sp_name', '$json_params', '$json_result', '".G5_TIME_YMDHIS."')", true);
+        
+        return $row;
+    }
+}
+
+/**
+ *    1. ERP 에서 상품 자료 요청
+
+     프로시저명: SM_TRAN_ORDER_DATA
+
+     파라미터  : 없음
+
+     리턴값    : RSLT            INTEGER        0 - 실행완료            ( 예외 상황은 없습니다 )
+                 RSLT_ITEM       VARCHAR(80)    자료가 처리되었습니다.  ( 예외 상황은 없습니다 )
+                 
+     결과      : 프로시저가 실행되면 S_MALL_ORDERS 에 상품자료가 저장됩니다.
+ */
+function SM_TRAN_ORDER_DATA()
+{
+    return mssql_sql_call("SM_TRAN_ORDER_DATA", null);
+}
+/**
+ *    2. ERP 에서 특정상품 재고 요청
+
+     프로시저명: SM_GET_STOCK
+
+     파라미터  : ORDER_NO        CHAR(12)       요청할 품명 - NULL 이면 모든 품명입니다.
+     
+     리턴값    : RSLT            INTEGER        0 - 실행완료            ( 예외 상황은 없습니다 )
+                 RSLT_ITEM       VARCHAR(80)    자료가 처리되었습니다.  ( 예외 상황은 없습니다 )
+
+     결과      : ORDER_NO 를 NULL 로 호출하면 모든 상품의 재고가 UPDATE 됩니다.
+                 특정한 품명을 넣고 호출하면 해당 품명의 모든 색상/사이즈의 재고만 UPDATE 됩니다.
+
+     ** 리팩상품 재고는 제외됩니다. 리팩상품 재고는 S_MALL_REPACK_JAEGO 를 확인하면 됩니다.
+     ** EXEC SM_GET_STOCK NULL 로 호출해도 아주 짧은 시간만 소요되므로 무방합니다.
+ * @param ORDER_NO        CHAR(12)       요청할 품명 - NULL 이면 모든 품명입니다.
+ */
+function SM_GET_STOCK($ORDER_NO)
+{
+    $params = array(
+        array("param_name"=>"@ORDER_NO","var"=>$ORDER_NO,"type"=>SQLVARCHAR)
+    );
+    return mssql_sql_call("SM_GET_STOCK", $params);
+}
+
+/**
+ * 3. ERP 로 고객 자료 전송
+
+     프로시서명: SM_SEND_CUST_DATA
+     
+     파라미터  : CUST_ID         VARCHAR(20)    쇼핑몰에서 사용하는 고객 ID - 중복이 허용되지 않은 고유 KEY  ** 필수항목
+                 NAME            VARCHAR(40)    고객성명                                                     ** 필수항목
+                 H_PHONE         VARCHAR(25)    핸드폰    XXX-XXXX-XXXX 의 형태로 전송함                     ** 필수항목
+                 PHONE           VARCHAR(25)    전화번호  XXX-XXXX-XXXX 의 형태로 전송함
+                 ZIP             VARCHAR(7)     우편번호  구 우편번호 XXX-XXX 또는 5 자리 우편번호 XXXXX
+                 ADR1            VARCHAR(120)   주소 1                                                       ** 필수항목
+                 ADR2            VARCHAR(120)   주소 2
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 전송되어 ERP 에 저장된 고객자료는 S_MALL_CUST 에 저장됩니다.
+                 이후 ERP 와 매출자료 전송시 고객은 쇼핑몰의 ID 를 통해서 연동하게 됩니다.
+ * @param mb_id
+ */
+function SM_SEND_CUST_DATA($mb)
+{
+    $params = array(
+        array("param_name"=>"@ID","var"=>$mb['mb_id'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@NAME","var"=>$mb['mb_name'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@H_PHONE","var"=>$mb['mb_hp'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@PHONE","var"=>$mb['mb_tel'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ZIP","var"=>$mb['mb_zip1'].$mb['mb_zip2'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ADR1","var"=>$mb['mb_addr1'],"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ADR2","var"=>$mb['mb_addr2'],"type"=>SQLVARCHAR)
+    );
+    return mssql_sql_call("SM_SEND_CUST_DATA", $params);
+}
+
+function SM_FINISH_RENTAL_DATA($od_id, $current_status)
+{
+    global $g5;
+    $r = array();
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    $od_type = "O";
+    //$od_type = "R"; - 삼진연동 R은 주문번호 에러발생
+    
+    
+    $ctsql = " select  a.od_type, a.od_id, a.od_sub_id, a.rf_serial, a.io_sapcode_color_gz, a.ct_price, a.io_price,a.ct_rental_price
+                                ,b.io_sapcode_color_gz, b.io_order_no, b.io_color_name, b.io_hoching
+                                ,a.ct_laundry_price, a.ct_free_laundry, a.ct_zbox_price
+                        from    lt_shop_order_item as a
+                                inner join lt_shop_item_option as b
+                                  on a.it_id = b.it_id and a.io_id = b.io_id
+                                inner join lt_shop_cart as c
+                                  on a.ct_id = c.ct_id
+                        where a.od_id = '{$od_id}'
+                         and  c.ct_status = '{$current_status}'
+                         and  b.io_sapcode_color_gz != ''
+                        order by od_sub_id asc
+                        ";
+    $ctr = sql_query($ctsql);
+    
+    $WASHING_CHARGE = 0;
+    $BOX_CHARGE = 0;
+    for($k=0; $ct=sql_fetch_array($ctr); $k++) {
+        
+        $SM_SERIAL = $od_type.'-'.substr($ct['od_id'],0,8).'-'.substr($ct['od_id'],8,6).'-'.$ct['od_sub_id'];
+        $AMOUNT = (int)$ct['ct_rental_price'] + (int)$ct['io_price'];
+        $WASHING_CHARGE = $WASHING_CHARGE + ((int)$ct['ct_laundry_price'] * (int)$ct['ct_free_laundry'] * ((int)$od['rt_month']/12)); //유료세탁비 * 무료제공횟수 * 3년(리스개월수/12)
+        $BOX_CHARGE = $BOX_CHARGE + (int)$ct['ct_zbox_price'];
+        $params = array(
+            array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@ORDER_NO","var"=>$ct['io_order_no'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@COLOR","var"=>$ct['io_color_name'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@HOCHING","var"=>$ct['io_hoching'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@RENT_PER_MON","var"=>$AMOUNT,"type"=>SQLINT4)
+        );
+        
+        $stmt =  mssql_sql_call("SM_ADD_RENTAL_DATA", $params);
+        /*
+        
+        프로시저명: SM_ADD_RENTAL_DATA
+        파라미터  : SM_SERIAL       VARCHAR(22)    쇼핑몰 주문번호 - 일련번호 포함 22 자리 전송함
+        ORDER_NO        CHAR(12)       품명
+        COLOR           CHAR(4)        색상
+        HOCHING         CHAR(8)        호칭
+        RENT_PER_MON    INTEGER        월리스료
+        리턴값    : RSLT_CODE       INTEGER        결과코드
+        RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+        */
+    }
+    
+    $SM_SERIAL = $od_type.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = substr($od['od_time'],0,10);
+    $COUPON_AMOUNT =  (int)$od['od_cart_coupon'];
+    $POINT =  (int)$od['od_receipt_point'];
+    $DELIVERY_CHARGE = (int)$od['od_send_cost']+(int)$od['od_send_cost2'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], ((int)$od['rt_rental_price'] * (int)$od['rt_month'])); //수수료 계산
+    $I_DAY = $od['rt_billday'];
+    $CUST_ID = $od['mb_id'];
+    
+    $params = array(
+        array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@COUPON_AMOUNT","var"=>$COUPON_AMOUNT,"type"=>SQLINT4)
+        ,array("param_name"=>"@POINT","var"=>$POINT,"type"=>SQLINT4)
+        ,array("param_name"=>"@ETC_AMOUNT","var"=>0,"type"=>SQLINT4)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@WASHING_CHARGE","var"=>$WASHING_CHARGE,"type"=>SQLINT4)
+        //,array("param_name"=>"@BOX_CHARGE","var"=>$BOX_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@ETC_CHARGE","var"=>0,"type"=>SQLINT4)
+        ,array("param_name"=>"@I_DAY","var"=>$I_DAY,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@CUST_ID","var"=>$CUST_ID,"type"=>SQLVARCHAR)
+    );
+    
+    $stmt = mssql_sql_call("SM_FINISH_RENTAL_DATA", $params);
+    
+    //return $r;
+    /*
+    2. 개별 리스자료를 전송한뒤 마스터자료 전송
+
+     프로시저명: SM_FINISH_RENTAL_DATA
+
+     파라미터  : SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 COUPON_AMOUNT   INTEGER        쿠폰 할인금액
+                 POINT           INTEGER        포인트 사용금액
+                 ETC_AMOUNT      INTEGER        기타 프로모션 금액
+                 DELIVERY_CHARGE INTEGER        총배송비 80000원 (1회당 배송비 8000원: 최초배송 1회 + 세탁 3회 * 3번 )
+                                                ** 무료세탁시는 1회당 박스배송,고객발송,완료후배송의 3회가 필요하므로 1회당 3 번의 배송비:24000원이 소요됨 
+                 WASHING_CHARGE  INTEGER        총세탁비 106500원 (35500원 3회)
+                 BOX_CHARGE      INTEGER        BOX 비   13800 원 (4600원  3회) 
+                 PG_CHARGE       INTEGER        총 PG 수수료 (36회분)
+                 I_DAY           SMALLINT       매월 입금일자
+                 CUST_ID         VARCHAR(20)    고객코드
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 위의 SM_ADD_RENTAL_DATA 로 전송된 자료들이 유효한 자료로 전송됩니다.
+
+     *** 3 개의 상품이 한 번에 리스되었을때는 상품별로 SM_ADD_RENTAL_DATA 를 세번 호출한다음
+         SM_FINISH_RENTAL_DATA 를 호출해야 합니다.
+     */
+}
+
+function SM_ADD_RENTAL_IBKEUM($od_id)
+{
+    global $g5;
+    //$od_type = "R";
+    $od_type = "O";
+    
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od_type.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $AMOUNT = (int)$od['rt_rental_price'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], $AMOUNT); //수수료 계산
+    $MON = (int)$od['rt_payment_count'] + 1;
+    
+    $params = array(
+       array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@MON","var"=>$MON,"type"=>SQLINT2)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    $result =  mssql_sql_call("SM_ADD_RENTAL_IBKEUM", $params);
+    
+    return $result;
+    /*
+     *    3. 리스료 입금 자료 전송
+
+     프로시저명: SM_ADD_RENTAL_IBKEUM
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 MON             SMALLINT       불입개월수
+                 PG_CHARGE       INTEGER        발생한 PG 수수료
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 월리스료 입금이 처리됨.
+     */
+}
+
+function SM_ADD_RENTAL_CANCEL($od_id, $RSP)
+{
+    global $g5;
+    //$od_type = "R";
+    $od_type = "O";
+    
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od_type.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@RSP","var"=>$RSP,"type"=>SQLINT2)
+    );
+    $result =  mssql_sql_call("SM_ADD_RENTAL_CANCEL", $params);
+    
+    return $result;
+    /*
+     *    4. 리스 취소 - 고객이 취소했을 때
+
+     프로시저명: SM_ADD_RENTAL_CANCEL
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 RSP             SMALLINT       취소시 귀책구분  1-리탠다드 귀책  2-고객귀책
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 리스계약이 취소됩니다.
+                 S_MALL_SALE_MAIN_MASTER 를 확인해서 SALE_DATE 가 기록되었으면 실물 회수후 호출해야 합니다.
+     */
+}
+
+function SM_ADD_RENTAL_RETURN($od_id)
+{
+    global $g5;
+    //$od_type = "R";
+    $od_type = "O";
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od_type.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $MON = (int)$od['rt_payment_count'];
+    $PENALTY = (int)$od['od_penalty'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], $PENALTY); //수수료 계산
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@MON","var"=>$MON,"type"=>SQLINT2)
+        ,array("param_name"=>"@PENALTY","var"=>$PENALTY,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    $result =  mssql_sql_call("SM_ADD_RENTAL_RETURN", $params);
+    
+    return $result;
+    /*
+     *    5. 리스상품의 회수
+
+     프로시저명: SM_ADD_RENTAL_RETURN
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 MON             SMALLINT       최종불입 개월수
+                 PENALTY         INTEGER        위약금
+                 PG_CHARGE       INTEGER        PG 수수료
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 리스상품중 1회 이상 입금된 상품의 회수(반납) 처리가 됩니다.
+     */
+}
+
+function SM_ADD_RENTAL_LOSS($od_id, $KUBUN)
+{
+    global $g5;
+    //$od_type = "R";
+    $od_type = "O";
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od_type.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $MON = (int)$od['rt_payment_count'];
+    $PENALTY = (int)$od['od_penalty'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], $PENALTY); //수수료 계산
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@MON","var"=>$MON,"type"=>SQLINT2)
+        ,array("param_name"=>"@KUBUN","var"=>$KUBUN,"type"=>SQLINT2)
+        ,array("param_name"=>"@PENALTY","var"=>$PENALTY,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    $result =  mssql_sql_call("SM_ADD_RENTAL_LOSS", $params);
+    
+    return $result;
+    /*
+     *    6. 리스상품의 반납/파손/분실
+
+     프로시저명: SM_ADD_RENTAL_LOSS
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 MON             SMALLINT       최종불입 개월수
+                 KUBUN           SMALLINT       1-파손  2-분실
+                 PENALTY         INTEGER        파손/분실료
+                 PG_CHARGE       INTEGER        PG 수수료
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 리스상품중 파손/분실 처리된 상품의 처리가 됩니다.
+     */
+}
+
+function SM_FINISH_SALE_DATA($od_id, $current_status)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $ctsql = " select  a.od_type, a.od_id, a.od_sub_id, a.rf_serial, a.io_sapcode_color_gz, a.ct_price, a.io_price,a.ct_rental_price
+                                ,b.io_sapcode_color_gz, b.io_order_no, b.io_color_name, b.io_hoching
+                                ,a.ct_laundry_price, a.ct_free_laundry, a.ct_zbox_price
+                        from    lt_shop_order_item as a
+                                inner join lt_shop_item_option as b
+                                  on a.it_id = b.it_id and a.io_id = b.io_id
+                                inner join lt_shop_cart as c
+                                  on a.ct_id = c.ct_id
+                        where a.od_id = '{$od_id}'
+                         and  c.ct_status = '{$current_status}'
+                         and  b.io_sapcode_color_gz != ''
+                        order by od_sub_id asc
+                        ";
+    $ctr = sql_query($ctsql);
+    
+    $WASHING_CHARGE = 0;
+    $BOX_CHARGE = 0;
+    for($k=0; $ct=sql_fetch_array($ctr); $k++) {
+        
+        $SM_SERIAL = $ct['od_type'].'-'.substr($ct['od_id'],0,8).'-'.substr($ct['od_id'],8,6).'-'.$ct['od_sub_id'];
+        $AMOUNT = (int)$ct['ct_price'] + (int)$ct['io_price'];
+        //$WASHING_CHARGE = $WASHING_CHARGE + ((int)$ct['ct_laundry_price'] * (int)$ct['ct_free_laundry'] * ((int)$od['rt_month']/12)); //유료세탁비 * 무료제공횟수 * 3년(리스개월수/12)
+        $RF_SERIAL = $ct['rf_serial'];
+        $BOX_CHARGE = $BOX_CHARGE + (int)$ct['ct_zbox_price'];
+        
+        $params = array(
+            array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@RF_SERIAL","var"=>$RF_SERIAL,"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@ORDER_NO","var"=>$ct['io_order_no'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@COLOR","var"=>$ct['io_color_name'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@HOCHING","var"=>$ct['io_hoching'],"type"=>SQLVARCHAR)
+            ,array("param_name"=>"@AMOUNT","var"=>$AMOUNT,"type"=>SQLINT4)
+        );
+        
+        $stmt =  mssql_sql_call("SM_ADD_SALE_DATA", $params);
+        /*
+        1. ERP 로 개별 판매자료 전송 - 품명/색상/호칭/월리스료
+         프로시저명: SM_ADD_SALE_DATA
+    
+         파라미터  : SM_SERIAL       VARCHAR(22)    쇼핑몰 주문번호 - 일련번호 포함 22 자리 전송함
+                     RF_SERIAL       VARCHAR(16)    RF 고유번호 - 판매상품이 리팩상품 일때만 RF_SERIAL 을 기록하고 일반판매는 NULL 로 전송함
+                     ORDER_NO        CHAR(12)       품명
+                     COLOR           CHAR(4)        색상
+                     HOCHING         CHAR(8)        호칭
+                     AMOUNT          INTEGER        실판매가
+    
+         리턴값    : RSLT_CODE       INTEGER        결과코드
+                     RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                     
+         결과      : 전송된 자료들이 임시 테이블에 저장됩니다.
+                     아래 SM_FINISH_SALE_DATA 를 호출해야 유효한 자료로 저장됩니다.
+        */
+    }
+    $KUBUN = 1; //판매유형  1-신규판매 2-리팩판매
+    $SM_SERIAL = $od['od_type'].'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = substr($od['od_time'],0,10);
+    $COUPON_AMOUNT =  (int)$od['od_cart_coupon'];
+    $POINT =  (int)$od['od_receipt_point'];
+    $DELIVERY_CHARGE = (int)$od['od_send_cost']+(int)$od['od_send_cost2'];
+    $DLV_KUBUN = ($DELIVERY_CHARGE > 0)?1:0;
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_receipt_price']); //수수료 계산
+    $CUST_ID = $od['mb_id'];
+    
+    $params = array(
+        array("param_name"=>"@KUBUN","var"=>$KUBUN,"type"=>SQLINT2)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@COUPON_AMOUNT","var"=>$COUPON_AMOUNT,"type"=>SQLINT4)
+        ,array("param_name"=>"@POINT","var"=>$POINT,"type"=>SQLINT4)
+        ,array("param_name"=>"@ETC_AMOUNT","var"=>0,"type"=>SQLINT4)
+        ,array("param_name"=>"@DLV_KUBUN","var"=>$DLV_KUBUN,"type"=>SQLINT2)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@CUST_ID","var"=>$CUST_ID,"type"=>SQLVARCHAR)
+    );
+    
+    $stmt =  mssql_sql_call("SM_FINISH_SALE_DATA", $params);
+    return $stmt;
+    /*
+      2. 개별 판매자료를 전송한뒤 마스터자료 전송
+
+     프로시저명: SM_FINISH_SALE_DATA
+
+     파라미터  : KUBUN           SMALLINT       판매유형  1-신규판매 2-리팩판매
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 COUPON_AMOUNT   INTEGER        쿠폰 할인금액
+                 POINT           INTEGER        포인트 사용금액
+                 ETC_AMOUNT      INTEGER        기타 프로모션 금액
+                 DLV_KUBUN       SMALLINT       배송비 구분 0-무상 1-유상  ** 리팩판매는 무조건 무상으로 처리됩니다.
+                 DELIVERY_CHARGE INTEGER        배송비
+                 PG_CHARGE       INTEGER        발생한 PG수수료
+                 CUST_ID         VARCHAR(20)    고객코드
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 위의 SM_ADD_SALE_DATA 로 전송된 자료들이 유효한 자료로 전송됩니다.
+
+     *** 3 개의 상품이 한 번에 판매되었을때는 상품별로 SM_ADD_SALE_DATA 를 세번 호출한다음
+         SM_FINISH_SALE_DATA 를 호출해야 합니다.
+     */
+}
+
+/**
+ *   3. 판매 취소
+ * @param $od_id
+ * @param  $RSP - 취소시 귀책구분  1-리탠다드 귀책  2-고객귀책
+ * @return 
+ */
+function SM_ADD_SALE_CANCEL($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $RSP = "1";
+    $od_sh = sql_fetch("select cancel_select from lt_shop_order_history where od_id = '$od_id' and ct_status_claim = '반품' order by sh_id desc limit 1");
+    
+    //고객 귀책
+    if($od_sh['cancel_select'] == "색상및사이즈변경" || $od_sh['cancel_select'] == "다른상품잘못주문") {
+        $RSP = "2";
+    }
+    
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od['od_type'].'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@RSP","var"=>$RSP,"type"=>SQLINT2)
+    );
+    $result =  mssql_sql_call("SM_ADD_SALE_CANCEL", $params);
+    
+    return $result;
+    /*
+     *    3. 판매 취소
+
+     프로시저명: SM_ADD_SALE_CANCEL
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 RSP             SMALLINT       취소시 귀책구분  1-리탠다드 귀책  2-고객귀책
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 판매가 취소됩니다.
+                 S_MALL_SALE_MAIN_MASTER 를 확인해서 SALE_DATE 가 기록되었으면 실물 회수후 호출해야 합니다.
+     */
+}
+
+
+function SM_ADD_PARTIAL_SALE_CANCEL($od_id, $RSP)
+{
+    global $g5;
+    $od = sql_fetch(" select od_type, od_id, od_settle_case, od_refund_price from lt_shop_order where od_id = '$od_id' ");
+    
+    $ISSUE_DATE = G5_TIME_YMD;
+    $SM_SERIAL = $od['od_type'].'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_refund_price']); //취소 수수료 계산
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@RSP","var"=>$RSP,"type"=>SQLINT2)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $ct_result = sql_query(" select a.od_sub_id from lt_shop_order_item as a inner join lt_shop_cart as c on a.ct_id = c.ct_id where c.od_id = '$od_id' and c.ct_status in ('주문취소', '반품완료') ");
+    for ($i=1; $row=sql_fetch_array($ct_result); $i++)
+    {
+        array_push($params, array("param_name"=>"@S".$i,"var"=>$row['od_sub_id'],"type"=>SQLVARCHAR));
+    }
+    
+    for ($j = $i; $j <= 10; $j++) {
+        array_push($params, array("param_name"=>"@S".$i,"var"=>'',"type"=>SQLVARCHAR));
+    }
+    
+    $result =  mssql_sql_call("SM_ADD_PARTIAL_SALE_CANCEL", $params);
+    
+    return $result;
+    /*
+     *          4. 판매 부분취소
+
+     프로시저명: SM_ADD_PARTIAL_SALE_CANCEL
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 주문번호 - 마스터 17 자리만 전송함
+                 RSP             SMALLINT       취소시 귀책구분  1-리탠다드 귀책  2-고객귀책
+                 PG_CHARGE       INTEGER        취소된 상품들의 PG 수수료 ( 양수로 전송함 )
+                 S1              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S2              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S3              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S4              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S5              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S6              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S7              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S8              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 S9              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+                 SA              VARCHAR(4)     취소된 상품의 주문번호 하위 4 자리
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+                 
+     결과      : 지정한 하위번호의 판매가 취소됩니다.
+                 S_MALL_SALE_MAIN_MASTER 를 확인해서 SALE_DATE 가 기록되었으면 실물 회수후 호출해야 합니다.
+
+                 ** 부분취소는 10개 까지 가능합니다.
+                    '0001','0003','0006' 세개의 하위번호가 부분취소 되었다면
+                    S1 에서 SA 까지 '0001','0003','0006',NULL,NULL,NULL,NULL,NULL,NULL,NULL 과 같이 호출합니다.
+     */
+}
+
+
+
+function SM_ADD_CLEANING_REQUEST($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    $ct = sql_fetch(" select * from lt_shop_cart where od_id = '$od_id' ");
+    
+    $buy_item = sql_fetch(" select * from lt_shop_order_item where ct_id = '{$ct['buy_ct_id']}' and  od_sub_id = '{$ct['buy_od_sub_id']}' ");
+    
+    //$SM_SERIAL = $od['od_type'].'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $SM_SERIAL = 'O-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = substr($od['od_time'],0,10);
+    
+    $ORG_SM_SERIAL = $buy_item['od_type'].'-'.substr($buy_item['od_id'],0,8).'-'.substr($buy_item['od_id'],8,6);
+    
+    $KUBUN = ($ct['ct_free_laundry_use'] == '1')?0:1; //세탁유무상 구분 0-무상 1-유상  ** 보관은 무조건 유상임
+    //$DELIVERY_CHARGE = (int)$od['od_send_cost']+(int)$od['od_send_cost2'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_receipt_price']); //수수료 계산
+    
+    if($od['od_type']== "L"){
+        $DELIVERY_CHARGE = (int)$ct['ct_laundry_delivery_price'];
+        $WASHING_CHARGE = (int)$ct['ct_laundry_price'] - (int)$buy_item['ct_zbox_price'] - $DELIVERY_CHARGE; //세탁비 : 세탁비-박스비-배송비
+        $STORAGE_CHARGE = 0;
+    } else if($od['od_type']== "K"){
+        $DELIVERY_CHARGE = (int)$ct['ct_laundrykeep_delivery_price'];
+        $WASHING_CHARGE = (int)$ct['ct_laundry_price'] - (int)$buy_item['ct_zbox_price'] - $DELIVERY_CHARGE; //세탁비 : 세탁비-박스비-배송비
+        $STORAGE_CHARGE = (int)$ct['ct_laundrykeep_kprice'] * (int)$ct['ct_keep_month'];
+    }
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ORG_SM_SERIAL","var"=>$ORG_SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@KUBUN","var"=>$KUBUN,"type"=>SQLINT2)
+        ,array("param_name"=>"@SZ","var"=>$buy_item['ct_zbox_name'],"type"=>SQLINT4)
+        ,array("param_name"=>"@CUST_SHARE","var"=>$od['od_receipt_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@WASHING_CHARGE","var"=>$WASHING_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@STORAGE_CHARGE","var"=>$STORAGE_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@BOX_CHARGE","var"=>$buy_item['ct_zbox_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_CLEANING_REQUEST", $params);
+    /*
+     1. 세탁/보관자료 전송
+
+     프로시저명: SM_ADD_CLEANING_REQUEST
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 세탁/보관 주문번호 - 마스터 17 자리만 전송함
+                 ORG_SM_SERIAL   VARCHAR(17)    원래 판매시의 주문번호
+                 KUBUN           SMALLINT       세탁유무상 구분 0-무상 1-유상  ** 보관은 무조건 유상임
+                 SZ              SMALLINT       박스 규격 1-15 까지
+                 CUST_SHARE      INTEGER        고객부담금
+                 WASHING_CHARGE  INTEGER        세탁비
+                 STORAGE_CHARGE  INTEGER        보관비
+                 DELIVERY_CHARGE INTEGER        배송비
+                 BOX_CHARGE      INTEGER        박스비
+                 PG_CHARGE       INTEGER        PG 수수료
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+
+     결과      : 세탁,보관 요청을 처리함
+     */
+}
+
+function SM_ADD_CLEANING_FINISH($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    //$SM_SERIAL = $od['od_type'].'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = G5_TIME_YMD;
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_CLEANING_FINISH", $params);
+    /*
+     2. 세탁/보관 처리후 고객에게 배송완료
+
+     프로시저명: SM_ADD_CLEANING_FINISH
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    발생일자 YYYY-MM-DD 의 형식으로 전송함
+                 SM_SERIAL       VARCHAR(17)    쇼핑몰 세탁/보관 주문번호 - 마스터 17 자리만 전송함
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+
+     결과      : 세탁,보관후 고객에게 배송처리 완료
+     */
+}
+
+
+function SM_ADD_REPAIR_REQUEST($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    $ct = sql_fetch(" select * from lt_shop_cart where od_id = '$od_id' ");
+    $buy_item = sql_fetch(" select * from lt_shop_order_item where ct_id = '{$ct['buy_ct_id']}' and  od_sub_id = '{$ct['buy_od_sub_id']}' ");
+    
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = substr($od['od_time'],0,10);
+    $ORG_SM_SERIAL = $buy_item['od_type'].'-'.substr($buy_item['od_id'],0,8).'-'.substr($buy_item['od_id'],8,6);
+    
+    $DELIVERY_CHARGE = (int)$od['od_send_cost']+(int)$od['od_send_cost2'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_receipt_price']); //수수료 계산
+    
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ORG_SM_SERIAL","var"=>$ORG_SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@CUST_SHARE","var"=>$od['od_receipt_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@REPAIR_CHARGE","var"=>$od['od_cart_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_REPAIR_REQUEST", $params);
+    /*
+     1. 수선요청 접수 ( 수선접수시 판정후 수선이 가능할 때 )
+
+     프로시저명: SM_ADD_REPAIR_REQUEST
+
+     파라미터  : ISSUE_DATE      VARCHAR(10)    접수일자
+                 SM_SERIAL       VARCHAR(17)    수선 주문번호
+                 ORG_SM_SERIAL   VARCHAR(17)    최초 리스/판매시의 주문번호
+                 CUST_SHARE      INTEGER        고객부담금
+                 REPAIR_CHARGE   INTEGER        소요될 수선비
+                 DELIVERY_CHARGE INTEGER        소요될 배송비
+                 PG_CHARGE       INTEGER        PG 수수료
+
+     리턴값    : RSLT_CODE       INTEGER        결과코드
+                 RSLT_ITEM       VARCHAR(80)    위 코드에 대한 내역
+
+     결과      : 수선(유료) 이 접수됨
+     */
+}
+
+function SM_ADD_REPAIR_REJECT($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    $ct = sql_fetch(" select * from lt_shop_cart where od_id = '$od_id' ");
+    $buy_item = sql_fetch(" select * from lt_shop_order_item where ct_id = '{$ct['buy_ct_id']}' and  od_sub_id = '{$ct['buy_od_sub_id']}' ");
+    
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = G5_TIME_YMD;
+    $ORG_SM_SERIAL = $buy_item['od_type'].'-'.substr($buy_item['od_id'],0,8).'-'.substr($buy_item['od_id'],8,6);
+    
+    $DELIVERY_CHARGE = (int)$od['od_send_cost2'];
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_send_cost2']); //수수료 계산
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@ORG_SM_SERIAL","var"=>$ORG_SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@CUST_SHARE","var"=>$od['od_receipt_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+        ,array("param_name"=>"@PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_REPAIR_REJECT", $params);
+    /*
+     2. 수선이 접수되었으나 수선불가로 반송처리됨
+
+      프로시저명: SM_ADD_REPAIR_REJECT
+
+      파라미터  : ISSUE_DATE      VARCHAR(10)            처리일자
+                  SM_SERIAL       VARCHAR(17)            원래의 수선 주문번호
+                  ORG_SM_SERIAL   VARCHAR(17),           최초 리스/판매시의 주문번호
+                  CUST_SHARE      INTEGER                고객부담금
+                  DELIVERY_CHARGE INTEGER                반송배송비
+                  PG_CHARGE       INTEGER                반송배송비의 PG 수수료
+
+      리턴값    : RSLT            INTEGER                0 - 실행완료
+                  RSLT_ITEM       VARCHAR(80)            자료가 처리되었습니다.
+                  
+      결과      : 수선이 접수되었으나 수선불가로 반송처리됨
+     */
+}
+
+function SM_ADD_CLEANING_CANCEL($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = G5_TIME_YMD;
+    
+    $PG_CHARGE = pg_charge_calc($od['od_settle_case'], (int)$od['od_receipt_price']); //수수료 계산
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@NEW_CUST_SHARE","var"=>$od['od_receipt_price'],"type"=>SQLINT4)
+        ,array("param_name"=>"@NEW_PG_CHARGE","var"=>$PG_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_CLEANING_CANCEL", $params);
+    /*
+     3. 수선 접수후 취소됨
+
+      프로시저명: SM_ADD_CLEANING_CANCEL
+      
+      파라미터  : ISSUE_DATE      VARCHAR(10)            처리일자
+                  SM_SERIAL       VARCHAR(17)            원래의 수선 주문번호
+                  NEW_CUST_SHARE  INTEGER                취소후 신규로 발생한 고객부담금  ** 수선접수시 발생했던 고객부담금은 모두 반환처리됨
+                  NEW_PG_CHARGE   INTEGER                취소후 신규로 발생한 PG 수수료   ** 수선접수시 발생했던 PG 수수료는  모두 반환처리됨
+
+      리턴값    : RSLT            INTEGER                0 - 실행완료
+                  RSLT_ITEM       VARCHAR(80)            자료가 처리되었습니다.
+                  
+      결과      : 현재 상태에서 세탁/보관이 취소됨
+                  1.접수상태 2.박스출고상태 3.완료후 배송상태의 세가지 상태에서 모두 발생할 수 있음
+     */
+}
+
+function SM_ADD_REPAIR_FINISH($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = G5_TIME_YMD;
+    $DELIVERY_CHARGE = (int)$od['od_send_cost2'];
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@DELIVERY_CHARGE","var"=>$DELIVERY_CHARGE,"type"=>SQLINT4)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_REPAIR_FINISH", $params);
+    /*
+     4. 수선 완료완료후 고객에게 배송됨
+
+      프로시저명: SM_ADD_REPAIR_FINISH
+
+      파라미터  : ISSUE_DATE      VARCHAR(10)            처리일자
+                  SM_SERIAL       VARCHAR(17)            원래의 수선 주문번호
+                  DELIVERY_CHARGE INTEGER                배송비
+
+      리턴값    : RSLT            INTEGER                0 - 실행완료
+                  RSLT_ITEM       VARCHAR(80)            자료가 처리되었습니다.
+
+      결과      : 처리됨
+     */
+}
+
+function SM_ADD_CUST_REPAIR_REJECT($od_id)
+{
+    global $g5;
+    $od = sql_fetch(" select * from lt_shop_order where od_id = '$od_id' ");
+    
+    $SM_SERIAL = 'O'.'-'.substr($od['od_id'],0,8).'-'.substr($od['od_id'],8,6);
+    $ISSUE_DATE = G5_TIME_YMD;
+    
+    $params = array(
+        array("param_name"=>"@ISSUE_DATE","var"=>$ISSUE_DATE,"type"=>SQLVARCHAR)
+        ,array("param_name"=>"@SM_SERIAL","var"=>$SM_SERIAL,"type"=>SQLVARCHAR)
+    );
+    
+    $stmt =  mssql_sql_call("SM_ADD_CUST_REPAIR_REJECT", $params);
+    /*
+        5. 수선접수후 완료되었으나 고객 클레임으로 취소 처리됨.
+
+      프로시저명: SM_ADD_CUST_REPAIR_REJECT
+
+      파라미터  : ISSUE_DATE      VARCHAR(10)            처리일자
+                  SM_SERIAL       VARCHAR(17)            원래의 수선 주문번호
+
+      리턴값    : RSLT            INTEGER                0 - 실행완료
+                  RSLT_ITEM       VARCHAR(80)            자료가 처리되었습니다.
+
+      결과      : 수선접수후 완료되었으나 고객 클레임으로 취소 처리됨.
+
+     */
+}
+?>

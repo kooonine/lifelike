@@ -1,0 +1,16 @@
+rpm -Uvh http://mirror.webtatic.com/yum/el6/latest.rpm
+yum install epel-release 
+yum update
+yum install wget gcc httpd patch mariadb-devel libxml2-devel bzip2-devel curl-devel libjpeg-turbo-devel libpng-devel freetype-devel readline-devel libtool-ltdl libtool-ltdl-devel httpd-devel pcre-devel freetds-devel
+
+wget https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/l/libmcrypt-2.5.8-13.el7.x86_64.rpm
+wget https://dl.fedoraproject.org/pub/epel/7/x86_64/Packages/l/libmcrypt-devel-2.5.8-13.el7.x86_64.rpm
+rpm -Uvh libmcrypt-2.5.8-13.el7.x86_64.rpm
+rpm -Uvh libmcrypt-devel-2.5.8-13.el7.x86_64.rpm
+
+libmcrypt-2.5.8-13.el7.x86_64.rpm  libmcrypt-devel-2.5.8-13.el7.x86_64.rpm  php-5.3.13  php-5.3.13.tar.gz
+
+php.patch
+patch -p0 -b
+'./configure' '--prefix=/usr/local/php53' '--with-libdir=lib64' '--with-config-file-scan-dir=/usr/local/php53/lib/ini_scan' '--with-apxs2' '--with-curl' '--with-openssl' '--with-gd' '--with-freetype-dir=/usr' '--with-png-dir=/usr' '--with-jpeg-dir=/usr' '--with-gettext' '--with-iconv' '--with-readline' '--with-bz2' '--with-zlib' '--with-mcrypt' '--with-mhash' '--with-xmlrpc' '--with-pear' '--enable-sockets' '--enable-exif' '--enable-gd-native-ttf' '--enable-pcntl' '--enable-mbstring=all' '--enable-mbregex' '--enable-libxml' '--enable-ftp' '--enable-dba' '--enable-ipv6' '--enable-roxen-zts' '--enable-bcmath' '--enable-zip=shared' '--enable-soap=shared' '--disable-debug' '--with-mysql' '--with-mysqli' '--with-pdo-mysql' '--with-mssql'
+

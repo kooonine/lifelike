@@ -1,0 +1,61 @@
+@charset "utf-8";
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* The Close Button */
+.modal .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 0;
+    width: 45px;
+    height: 45px;
+    z-index: 2001;
+    background: url(/img/mb/common/btn_closed_w.png) no-repeat 50% 50%;
+    background-size: 17px 17px;
+    
+}
+.modal .close:hover,
+.modal .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.close_daum_juso{width: 20px;}
+
+.item_row_list .photo {border-radius: 0 !important; }
+.item_badge, .item_badge_text { position: absolute; height: 28pt; }
+.item_badge_bottom { bottom: 0; right: 0; }
+.item_badge > span, .item_badge_text > span {
+    position: relative;
+    display: inline-block;
+    width: 28pt;
+    height: 28pt;
+    font-size: 8pt;
+    opacity: .7;
+    color: #ffffff;
+    text-align: center;
+    line-height: 28pt;
+    font-weight: bold;
+}
+.item_badge_text > span { opacity: 1; }
+.item_badge > .badge_new { background-color: #00bab3; }
+.item_badge > .badge_sale { background-color: #ff0000; }
+.item_badge > .badge_only { background-color: #440062; }
+.item_badge > .badge_best { background-color: #0099ba; }
+.item_badge > .badge_event { background-color: #0066bc; }
+.item_badge > .badge_lease { background-color: #000000; }

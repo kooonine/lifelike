@@ -1,0 +1,870 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="imagetoolbar" content="no">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<title>메시지 발송내역 | LITANDARD</title>
+<link rel="stylesheet" href="./css/admin.css">
+
+<!--[if lte IE 8]>
+<script src="../js/html5.js"></script>
+<![endif]-->
+<script>
+// 자바스크립트에서 사용하는 전역변수 선언
+var g5_url       = "http://litandard.letzdev.com";
+var g5_bbs_url   = "../bbs";
+var g5_is_member = "1";
+var g5_is_admin  = "super";
+var g5_is_mobile = "";
+var g5_bo_table  = "";
+var g5_sca       = "";
+var g5_editor    = "";
+var g5_cookie_domain = "";
+var g5_admin_url = ".";
+</script>
+
+<link href="./vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+
+<!-- Bootstrap -->
+<link href="./vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="./vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="./vendors/nprogress/nprogress.css" rel="stylesheet">
+
+<!-- Custom Theme Style -->
+<link href="./css/custom.min.css" rel="stylesheet">
+<!-- iCheck -->
+<link href="./vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+<!-- bootstrap-progressbar -->
+<link href="./vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="./vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="./vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="./vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="./vendors/nprogress/nprogress.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="./vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- iCheck -->
+<script src="./vendors/iCheck/icheck.min.js"></script>
+<script src="./vendors/moment/min/moment.min.js"></script>
+
+<script src="../js/common.js?ver=171222"></script>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="./vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+<script src="./vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="./vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="./vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="./vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="./vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<script src="./vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="./vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+<script src="./vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+
+</head>
+<body class="nav-md" >
+
+<script>
+var tempX = 0;
+var tempY = 0;
+
+function imageview(id, w, h)
+{
+
+    menu(id);
+
+    var el_id = document.getElementById(id);
+
+    //submenu = eval(name+".style");
+    submenu = el_id.style;
+    submenu.left = tempX - ( w + 11 );
+    submenu.top  = tempY - ( h / 2 );
+
+    selectBoxVisible();
+
+    if (el_id.style.display != 'none')
+        selectBoxHidden(id);
+}
+</script>
+
+	<div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+				<a href="." class="site_title">LITANDARD 관리자</a>
+            </div>
+
+			<div class="clearfix"></div>
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+
+              <div class="menu_section">
+                <ul class="nav side-menu">
+
+                  <li><a> 환경설정 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./config_form.php" >기본환경설정</a></li><li><a href="./auth_list.php" >관리권한설정</a></li><li><a href="./theme.php" >테마설정</a></li><li><a href="./menu_list.php" >메뉴설정</a></li><li><a href="./sendmail_test.php" >메일 테스트</a></li><li><a href="./newwinlist.php" >팝업레이어관리</a></li><li><a href="./session_file_delete.php" >세션파일 일괄삭제</a></li><li><a href="./cache_file_delete.php" >캐시파일 일괄삭제</a></li><li><a href="./captcha_file_delete.php" >캡챠파일 일괄삭제</a></li><li><a href="./thumbnail_file_delete.php" >썸네일파일 일괄삭제</a></li><li><a href="./phpinfo.php" >phpinfo()</a></li><li><a href="./browscap.php" >Browscap 업데이트</a></li><li><a href="./browscap_convert.php" >접속로그 변환</a></li><li><a href="./dbupgrade.php" >DB업그레이드</a></li><li><a href="./service.php" >부가서비스</a></li></ul>				  </li>
+
+                  <li><a> 환경설정관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>기본환경설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_biz.php">사업자정보</a></li><li><a href="./configform_pwd.php">비밀번호변경</a></li><li><a href="./configform_stipulation.php">이용약관설정</a></li><li><a href="./configform_etc.php">기타이용안내설정</a></li><li><a href="./configform_privacy.php">개인정보제공설정</a></li></ul></li><li><a>사이트환경관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_ip.php">IP접속제한관리</a></li><li><a href="./configformip_visit.php">방문자분석</a></li><li><a href="./configform_search.php">검색엔진 최적화</a></li><li><a href="./configform_mail.php">메일발송환경설정</a></li></ul></li><li><a>회원등급관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_usergrade.php">회원등급설정</a></li></ul></li><li><a>결제정보관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_payment.php">결제방식설정</a></li><li><a href="./configform_cash.php">현금영수증서비스</a></li><li><a href="./configform_tax.php">세금계산서서비스</a></li></ul></li><li><a>배송관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_delivery.php">배송/반품설정</a></li><li><a href="./configform_deliverycompany.php">배송업체관리</a></li></ul></li><li><a>관리자 권한설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_admin.php">관리자 리스트</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./member_list.php" >회원관리</a></li><li><a href="./mail_list.php" >회원메일발송</a></li><li><a href="./visit_list.php" >접속자집계</a></li><li><a href="./visit_search.php" >접속자검색</a></li><li><a href="./visit_delete.php" >접속자로그삭제</a></li><li><a href="./point_list.php" >포인트관리</a></li><li><a href="./poll_list.php" >투표관리</a></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>회원설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_config.php">회원가입항목설정</a></li></ul></li><li><a>회원정보 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_list.php">회원정보조회</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 게시판관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./board_list.php" >게시판관리</a></li><li><a href="./boardgroup_list.php" >게시판그룹관리</a></li><li><a href="./popular_list.php" >인기검색어관리</a></li><li><a href="./popular_rank.php" >인기검색어순위</a></li><li><a href="./qa_config.php" >1:1문의설정</a></li><li><a href="./contentlist.php" >내용관리</a></li><li><a href="./faqmasterlist.php" >FAQ관리</a></li><li><a href="./write_count.php" >글,댓글 현황</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/configform.php" >쇼핑몰설정</a></li><li><a href="./shop_admin/orderlist.php" >주문내역</a></li><li><a href="./shop_admin/personalpaylist.php" >개인결제관리</a></li><li><a href="./shop_admin/categorylist.php" >분류관리</a></li><li><a href="./shop_admin/itemlist.php" >상품관리</a></li><li><a href="./shop_admin/itemqalist.php" >상품문의</a></li><li><a href="./shop_admin/itemuselist.php" >사용후기</a></li><li><a href="./shop_admin/itemstocklist.php" >상품재고관리</a></li><li><a href="./shop_admin/itemtypelist.php" >상품유형관리</a></li><li><a href="./shop_admin/optionstocklist.php" >상품옵션재고관리</a></li><li><a href="./shop_admin/couponlist.php" >쿠폰관리</a></li><li><a href="./shop_admin/couponzonelist.php" >쿠폰존관리</a></li><li><a href="./shop_admin/sendcostlist.php" >추가배송비관리</a></li><li><a href="./shop_admin/inorderlist.php" >미완료주문</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰현황/기타 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/sale1.php" >매출현황</a></li><li><a href="./shop_admin/itemsellrank.php" >상품판매순위</a></li><li><a href="./shop_admin/orderprint.php" >주문내역출력</a></li><li><a href="./shop_admin/itemstocksms.php" >재입고SMS알림</a></li><li><a href="./shop_admin/itemevent.php" >이벤트관리</a></li><li><a href="./shop_admin/itemeventlist.php" >이벤트일괄처리</a></li><li><a href="./shop_admin/bannerlist.php" >배너관리</a></li><li><a href="./shop_admin/wishlist.php" >보관함현황</a></li><li><a href="./shop_admin/price.php" >가격비교사이트</a></li></ul>				  </li>
+
+                  <li><a> SMS 관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./sms_admin/config.php" >SMS 기본설정</a></li><li><a href="./sms_admin/member_update.php" >회원정보업데이트</a></li><li><a href="./sms_admin/sms_write.php" >문자 보내기</a></li><li><a href="./sms_admin/history_list.php" >전송내역-건별</a></li><li><a href="./sms_admin/history_num.php" >전송내역-번호별</a></li><li><a href="./sms_admin/form_group.php" >이모티콘 그룹</a></li><li><a href="./sms_admin/form_list.php" >이모티콘 관리</a></li><li><a href="./sms_admin/num_group.php" >휴대전화번호 그룹</a></li><li><a href="./sms_admin/num_book.php" >휴대전화번호 관리</a></li><li><a href="./sms_admin/num_book_file.php" >휴대전화번호 파일</a></li></ul>				  </li>
+				                </ul>
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+			 -->
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+		<!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+
+                <li class="" id="tnb_logout"><a href="../bbs/logout.php">로그아웃</a></li>
+				<li class=""><a href="../" class="tnb_shop" target="_blank" title="쇼핑몰 바로가기">쇼핑몰 이동</a></li>
+				<li class=""><a href="./member_form.php?w=u&amp;mb_id=admin">관리자정보</a></li>
+				<li class=""><a href="javascript:;">최고관리자 님</a></li>
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+<script>
+jQuery(function($){
+
+    var menu_cookie_key = 'g5_admin_btn_gnb';
+
+    $(".tnb_mb_btn").click(function(){
+        $(".tnb_mb_area").toggle();
+    });
+
+    $("#btn_gnb").click(function(){
+
+        var $this = $(this);
+
+        try {
+            if( ! $this.hasClass("btn_gnb_open") ){
+                set_cookie(menu_cookie_key, 1, 60*60*24*365);
+            } else {
+                delete_cookie(menu_cookie_key);
+            }
+        }
+        catch(err) {
+        }
+
+        $("#container").toggleClass("container-small");
+        $("#gnb").toggleClass("gnb_small");
+        $this.toggleClass("btn_gnb_open");
+
+    });
+
+    $(".gnb_ul li .btn_op" ).click(function() {
+        $(this).parent().addClass("on").siblings().removeClass("on");
+    });
+
+});
+</script>
+
+		<!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>push 발송 관리</h3>
+              </div>
+
+			  <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 pull-right">
+	                <h5> 홈 > 운영관리 > 메시지발송관리 > PUSH </h5>
+                </div>
+              </div>
+
+
+            </div>
+            <div class="clearfix"></div>
+
+
+
+
+
+<!-- @START@ 내용부분 시작 -->
+
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+  	<div class="x_panel">
+
+  	<form name="fconfigform" id="fconfigform" method="post" onsubmit="return fconfigform_submit(this);" data-parsley-validate class="form-horizontal form-label-left">
+  	<input type="hidden" name="token" value="" id="token">
+
+  	  <div class="x_title">
+  		<h2><span class="fa fa-check-square"></span> PUSH 발송내역 조회<small></small></h2>
+  		<label class="nav navbar-right"></label>
+  		<div class="clearfix"></div>
+  	  </div>
+
+  	  <div class="tbl_frm01 tbl_wrap">
+        <table>
+          <colgroup>
+          <col class="grid_4">
+          <col>
+          <col>
+          <col>
+          </colgroup>
+          <tr>
+            <th scope="row">검색기간</th>
+            <td colspan="3">
+                <div class='col-sm-3'>
+                  <div class='input-group date' id='fr_date'>
+                      <input type='text' class="form-control" />
+                      <span class="input-group-addon">
+                         <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+                </div>
+                <div class='col-sm-1 text-center'>
+                  ~
+                </div>
+
+
+                <div class='col-sm-3'>
+                  <div class='input-group date' id='to_date'>
+                      <input type='text' class="form-control" />
+                      <span class="input-group-addon">
+                         <span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                  </div>
+                </div>
+
+              <div class="btn-group btn-group-toggle col-sm-4" data-toggle="buttons">
+                <button type="button" name="dateGroup" class="btn btn-default" value="today">오늘</button>
+                <button type="button" name="dateGroup" class="btn btn-default" value="three">3일</button>
+                <button type="button" name="dateGroup" class="btn btn-default" value="oneWeek">1주</button>
+                <button type="button" name="dateGroup" class="btn btn-default" value="oneMonth">1개월</button>
+                <button type="button" name="dateGroup" class="btn btn-default" value="threeMonth">3개월</button>
+                <button type="button" name="dateGroup" class="btn btn-default" value="">전체</button>
+              </div>
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">메시지 구분</th>
+            <td colspan="2">
+              <select name="search_type" id="search_type" >
+                  <option value="전체" >전체</option>
+                  <option value="테스트" >테스트</option>
+                  <option value="테스트2" >테스트2</option>
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">전송결과</th>
+            <td colspan="2">
+              <label><input type="radio" class="flat" name="app_push_type"value="" /> 전체</label>
+              <label><input type="radio" class="flat" name="app_push_type" value="android" /> Android</label>
+              <label><input type="radio" class="flat" name="app_push_type" value="ios" /> IOS</label>
+            </td>
+          </tr>
+          <tr>
+            <th scope="col">발송결과</th>
+            <td colspan="2">
+              <label><input type="radio" class="flat" name="app_push_result"value="" /> 전체</label>
+              <label><input type="radio" class="flat" name="app_push_result" value="each" /> 발송완료</label>
+              <label><input type="radio" class="flat" name="app_push_result" value="all" /> 발송실패</label>
+            </td>
+          </tr>
+          <tr>
+            <th>수신자 검색</th>
+            <td colspan="2">
+              <select name="search_type" id="search_type" >
+                  <option value="전체" >전체</option>
+                  <option value="테스트" >테스트</option>
+                  <option value="테스트2" >테스트2</option>
+              </select>
+              <input type="text" name="search_value"  value="" id="search_value" class="frm_input" >
+
+            </td>
+          </tr>
+
+          <tr>
+            <td class="col-md-12 col-sm-12 col-xs-12 text-right" colspan="4" style="text-align:right;">
+              <input type="submit" class="btn btn-primary" value="검색"></input>
+            </td>
+          </tr>
+        </table>
+  	  </div>
+
+
+
+
+  	</form>
+
+  	</div>
+
+    <div class="x_panel">
+      <div class="x_title">
+        <h2><span class="fa fa-check-square"></span> PUSH 발송내역<small></small></h2>
+
+        <div class="clearfix"></div>
+      </div>
+      <div class="tbl_head01 tbl_wrap">
+          <table id="test">
+          <caption>목록</caption>
+          <thead>
+          <tr>
+            <th scope="col" class="col-md-1 col-sm-1 col-xs-12">No</th>
+            <th scope="col" class="col-md-2 col-sm-2 col-xs-12">발송시간</th>
+            <th scope="col" class="col-md-6 col-sm-6 col-xs-12">메시지제목</th>
+            <th scope="col" class="col-md-2 col-sm-2 col-xs-12">앱(OS)</th>
+            <th scope="col" class="col-md-2 col-sm-2 col-xs-12">수신자아이디</th>
+            <th scope="col" class="col-md-2 col-sm-2 col-xs-12">발송결과</th>
+          </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+          </table>
+      </div>
+    </div>
+
+
+  </div>
+
+
+</div>
+
+<script>
+$(document).ready(function() {
+
+  var data = [
+    {
+      'no':1
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':2
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':3
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':4
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':5
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':6
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':7
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':8
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':9
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':10
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':11
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':12
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':13
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':14
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':15
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':16
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':17
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':18
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':19
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    },
+    {
+      'no':20
+      ,'app_push_time':'2019-01-11 15:45:33'
+      ,'app_push_subject':'나는 낭만고양이'
+      ,'app_push_os':'android'
+      ,'app_push_reciver':'nandayo'
+      ,'app_push_result':'success'
+    }
+
+  ]
+
+  var lang_kor = {
+          "decimal" : "",
+          "emptyTable" : "데이터가 없습니다.",
+          "info" : "_START_ - _END_ (총 _TOTAL_ 개)",
+          "infoEmpty" : "0명",
+          "infoFiltered" : "(전체 _MAX_ 명 중 검색결과)",
+          "infoPostFix" : "",
+          "thousands" : ",",
+          "lengthMenu" : "_MENU_",
+          "loadingRecords" : "로딩중...",
+          "processing" : "처리중...",
+          "search" : "검색 : ",
+          "zeroRecords" : "검색된 데이터가 없습니다.",
+          "paginate" : {
+              "first" : "첫 페이지",
+              "last" : "마지막 페이지",
+              "next" : "다음",
+              "previous" : "이전"
+          },
+          "aria" : {
+              "sortAscending" : " :  오름차순 정렬",
+              "sortDescending" : " :  내림차순 정렬"
+          }
+      };
+
+
+var table5 = $('#test').DataTable({
+    'sDom': '<"pull-right"l>tpr'
+    ,'data': data
+    ,columns: [
+      {data : 'no'}
+      ,{'data' : 'app_push_time'}
+      ,{'data' : 'app_push_subject'
+        ,'render' : function (data, type, full, meta) {
+            return '<a href="#">'+data+'</a>';
+          }
+        }
+      ,{'data' : 'app_push_os'}
+      ,{'data' : 'app_push_reciver'}
+      ,{'data' : 'app_push_result'}
+
+    ]
+    ,'aLengthMenu': [[10, 20, 30, 50], ['10개씩 보기', '20개씩 보기', '30개씩 보기', '50개씩 보기']]
+    ,'iDisplayLength': 10
+    ,'language' : lang_kor
+  });
+
+var data2 = [
+  {
+    'no':1
+    ,'detail_no':1
+    ,'app_push_time':'2019-01-11 15:45:33'
+    ,'app_pusher_number':'010-0000-0000'
+    ,'sms_reciver_number':'010-1243-1234'
+    ,'sms_message':'HONchef 운영자님 정이현님이 heumgoon라는 ID로 회원가입하셨습니다.'
+    ,'app_push_result':'성공'
+  }
+]
+
+var table2 =  $('#detail').DataTable({
+    'sDom': 'tr'
+    ,'data': data2
+    ,columns: [
+      {'data' : 'no', 'visible' : false, "searchable": true}
+      ,{'data' : 'detail_no'}
+      ,{'data' : 'app_push_time'}
+      ,{'data' : 'app_pusher_number'}
+      ,{'data' : 'sms_reciver_number'}
+      ,{'data' : 'sms_message'}
+      ,{'data' : 'app_push_result', "searchable": true }
+
+    ]
+    ,'aLengthMenu': [[10, 20, 30, 50], ['10개씩 보기', '20개씩 보기', '30개씩 보기', '50개씩 보기']]
+    ,'iDisplayLength': 100
+    ,'language' : lang_kor
+  });
+  var rowData;
+  $('#test tbody').on( 'click', 'td', function () {
+      /*
+      rowData = table5.row($(this).parents('tr')).data();
+      var total = parseInt(rowData.app_push_result_stay) + parseInt(rowData.app_push_result_success) + parseInt(rowData.app_push_result_fail);
+      $('#detail_no').val(rowData.no);
+      $('#detail_label').html("[발생 총 건 :<font color='red'>"+total+"</font>건 / 대기 :<font color='red'>"+rowData.app_push_result_stay+"</font>건 / 성공 :<font color='red'>"+rowData.app_push_result_success+"</font>건 / 실패 :<font color='red'>"+rowData.app_push_result_fail+"</font>건]");
+      $.set_detail_history('');
+      $('#detail_modal').modal('toggle');
+      */
+  });
+
+});
+
+$.set_detail_history = function(app_push_type){
+  var detail_no = $('#detail_no').val();
+  var detail_table = $('#detail').dataTable().api();
+  detail_table.column(0).search(detail_no).draw();
+  detail_table.column(6).search(app_push_type).draw();
+}
+
+$('#test>a').click(function(event){
+  event.preventDefault();
+
+});
+
+
+
+
+$('#fr_date').datetimepicker({
+    format: 'YYYY-MM-DD'
+});
+
+$('#to_date').datetimepicker({
+    format: 'YYYY-MM-DD'
+});
+$('button[name="dateGroup"]').click(function(){
+      var date = new Date();
+      var y = date.getFullYear();
+      var m = date.getMonth();
+      var d = date.getDate();
+      $("#fr_date>input").val(date.getFullYear()+"-"+getCheckDate(date.getMonth()+1)+"-"+getCheckDate(date.getDate()));
+      var result = '';
+      if ($(this).val() != "") {
+        if ($(this).val() == "three") {
+          date = new Date(y, m, d+3);
+        } else if ($(this).val() == "oneWeek") {
+          date = new Date(y, m, d+7);
+        } else if ($(this).val() == "oneMonth") {
+          date = new Date(y, m+1, d);
+        } else if ($(this).val() == "threeMonth") {
+          date = new Date(y, m+3, d);
+        }
+        result = date.getFullYear()+"-"+getCheckDate(date.getMonth()+1)+"-"+getCheckDate(date.getDate());
+
+        $("#to_date>input").val(result);
+      }else {
+        $("#fr_date>input").val('');
+        $("#to_date>input").val('');
+      }
+});
+
+function getCheckDate(param){
+	if (parseInt(param) < 10) {
+		return "0"+param;
+	}else {
+		return param;
+	}
+}
+
+
+function fconfigform_submit(f)
+{
+    f.action = "./configform_delivery_update.php";
+    return true;
+}
+</script>
+
+
+
+
+<!-- @END@ 내용부분 끝 -->
+
+
+			</div>
+        </div>
+        <!-- /page content -->
+
+		<!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Copyright &copy; litandard.letzdev.com. All rights reserved.
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+
+<script>
+$(".scroll_top").click(function(){
+     $("body,html").animate({scrollTop:0},400);
+})
+</script>
+
+<!-- <p>실행시간 : 0 -->
+
+<script src="./admin.js?ver=171222"></script>
+<script src="../js/jquery.anchorScroll.js?ver=171222"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="./js/custom.min.js"></script>
+
+<script>
+
+
+$(function(){
+
+    var admin_head_height = $("#hd_top").height() + $("#container_title").height() + 5;
+
+    $("a[href^='#']").anchorScroll({
+        scrollSpeed: 0, // scroll speed
+        offsetTop: admin_head_height, // offset for fixed top bars (defaults to 0)
+        onScroll: function () {
+          // callback on scroll start
+        },
+        scrollEnd: function () {
+          // callback on scroll end
+        }
+    });
+
+    var hide_menu = false;
+    var mouse_event = false;
+    var oldX = oldY = 0;
+
+    $(document).mousemove(function(e) {
+        if(oldX == 0) {
+            oldX = e.pageX;
+            oldY = e.pageY;
+        }
+
+        if(oldX != e.pageX || oldY != e.pageY) {
+            mouse_event = true;
+        }
+    });
+
+
+});
+
+</script>
+
+<div class="modal fade" id="detail_modal" tabindex="-1" role="dialog" aria-labelledby="detail_modal">
+  <div class="modal-dialog modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">전송결과 상세 팝업</h4>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="detail_no"/>
+        <div>
+          <label id="detail_label">[발생 총 건 :<font color='red'>0</font>건 / 대기 :<font color='red'>0</font>건 / 성공 :<font color='red'>0</font>건 / 실패 :<font color='red'>0</font>건]</lebel>
+        </div>
+        <div class="" role="tabpanel" data-example-id="togglable-tabs">
+          <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+            <li role="presentation" class="active"><a href="#tab_content1" onclick="$.set_detail_history('')" id="all-tab" role="tab" data-toggle="tab" aria-expanded="true">전체</a>
+            </li>
+            <li role="presentation" class=""><a href="#tab_content2" onclick="$.set_detail_history('대기')" id="stay-tab" role="tab" data-toggle="tab" aria-expanded="false">대기</a>
+            </li>
+            <li role="presentation" class=""><a href="#tab_content3" onclick="$.set_detail_history('성공')" id="success-tab" role="tab" data-toggle="tab" aria-expanded="false">성공</a>
+            </li>
+            <li role="presentation" class=""><a href="#tab_content4" onclick="$.set_detail_history('실패')" id="fail-tab" role="tab" data-toggle="tab" aria-expanded="false">실패</a>
+            </li>
+          </ul>
+          <div class="clearfix"></div>
+
+          <div id="myTabContent" class="tab-content">
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="all-tab">
+            </div>
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content2" aria-labelledby="stay-tab">
+            </div>
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content3" aria-labelledby="success-tab">
+            </div>
+            <div role="tabpanel" class="tab-pane fade active in" id="tab_content4" aria-labelledby="fail-tab">
+            </div>
+          </div>
+          <div class="tbl_head01 tbl_wrap ">
+
+              <table id="detail" class="col-md-12 col-sm-12 col-xs-12">
+              <thead>
+              <tr>
+                <th scope="col" class="col-md-1 col-sm-1 col-xs-12"></th>
+                <th scope="col" class="col-md-1 col-sm-1 col-xs-12">No</th>
+                <th scope="col" class="col-md-2 col-sm-2 col-xs-12">발송시간</th>
+                <th scope="col" class="col-md-1 col-sm-1 col-xs-12">발신번호</th>
+                <th scope="col" class="col-md-1 col-sm-1 col-xs-12">수신번호</th>
+                <th scope="col" class="col-md-6 col-sm-6 col-xs-12">메시지</th>
+                <th scope="col" class="col-md-2 col-sm-2 col-xs-12">전송결과</th>
+              </tr>
+              </thead>
+              <tbody>
+
+              </tbody>
+              </table>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="modal-footer">
+        <br><br><br>
+        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div style='float:left; text-align:center;'>RUN TIME : 0<br></div> -->
+<!-- ie6,7에서 사이드뷰가 게시판 목록에서 아래 사이드뷰에 가려지는 현상 수정 -->
+<!--[if lte IE 7]>
+<script>
+$(function() {
+    var $sv_use = $(".sv_use");
+    var count = $sv_use.length;
+
+    $sv_use.each(function() {
+        $(this).css("z-index", count);
+        $(this).css("position", "relative");
+        count = count - 1;
+    });
+});
+</script>
+<![endif]-->
+
+</body>
+</html>

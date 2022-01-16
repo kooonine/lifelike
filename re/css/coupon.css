@@ -1,0 +1,183 @@
+.coupon-set {
+  font-family: Montserrat, NotoSansCJKkr;
+  display: inline-block;
+  width: 420px;
+}
+
+.coupon-set-inner {
+  height: 237px;
+  border: solid 1px #d0d0d0;
+  background-color: #ffffff;
+  text-align: left;
+  font-size: 0;
+}
+
+.coupon-set-inner-left {
+  padding: 28px 0 0 40px;
+  width: 344px;
+  display: inline-block;
+  vertical-align: top;
+  font-size: 24px;
+  font-weight: bold;
+  color: #4e4e4e;
+}
+
+.coupon-set-inner-right {
+  width: 74px;
+  height: 100%;
+  display: inline-block;
+  background: url(/img/re/logo_vertical@3x.png) center center no-repeat;
+  background-size: 21px;
+  background-color: #00bab3;
+  vertical-align: top;
+  right: 0px;
+}
+.coupon-set-inner-right-deco {
+  position: absolute;
+  width: 39px;
+  height: 48px;
+  border-radius: 48px 24px 24px 48px;
+  background-color: #00bab3;
+  margin-left: -19px;
+  margin-top: 95px;
+}
+
+.coupon-set-subject {
+  font-size: 110px;
+  font-weight: 500;
+  font-style: italic;
+  color: #00bab3;
+  padding-top: 16px;
+}
+
+.coupon-set-subject > small {
+  font-size: 60px;
+}
+
+.coupon-set-desc {
+  text-align: left;
+  padding: 15px 40px;
+  border: solid 1px #d0d0d0;
+  background-color: #ffffff;
+
+  font-size: 20px;
+  font-weight: bold;
+  line-height: 1.6;
+  color: #4e4e4e;
+  margin: 11px 0;
+}
+
+.coupon-set-count {
+  text-align: center;
+  line-height: 46px;
+  display: block;
+  float: right;
+  width: 46px;
+  height: 46px;
+  border: solid 0.5px #979797;
+  border-radius: 46px;
+  font-size: 15px;
+  font-weight: bold;
+  color: #808080;
+  margin-right: 20px;
+  margin-top: -8px;
+}
+
+.btn-download-coupon {
+  width: 100%;
+  height: 80px;
+  background-color: #00bab3;
+  border-color: #00bab3;
+  font-size: 22px;
+  font-weight: bold;
+  color: #ffffff;
+}
+.btn-download-coupon:hover {
+  color: #ffffff;
+}
+
+.coupon-set-color-orange .coupon-set-subject {
+  color: #f93f00;
+}
+.coupon-set-color-orange .coupon-set-inner-right {
+  background-color: #f93f00;
+}
+.coupon-set-color-orange .coupon-set-inner-right-deco {
+  background-color: #f93f00;
+}
+.coupon-set-color-orange .btn-download-coupon {
+  border-color: #f93f00;
+  background-color: #f93f00;
+}
+
+.coupon-set-color-gray .coupon-set-subject {
+  color: #9fa0a0;
+}
+.coupon-set-color-gray .coupon-set-inner-right {
+  background-color: #9fa0a0;
+}
+.coupon-set-color-gray .coupon-set-inner-right-deco {
+  background-color: #9fa0a0;
+}
+.coupon-set-color-gray .btn-download-coupon {
+  border-color: #9fa0a0;
+  background-color: #9fa0a0;
+}
+
+.coupon-set-color-darkgray .coupon-set-subject {
+  color: #333333;
+}
+.coupon-set-color-darkgray .coupon-set-inner-right {
+  background-color: #333333;
+}
+.coupon-set-color-darkgray .coupon-set-inner-right-deco {
+  background-color: #333333;
+}
+.coupon-set-color-darkgray .btn-download-coupon {
+  border-color: #333333;
+  background-color: #333333;
+}
+
+@media (max-width: 1366px) {
+  .coupon-set {
+    width: 250px;
+    margin-bottom: 15px;
+  }
+  .coupon-set-inner {
+    height: 160px;
+  }
+  .coupon-set-inner-left {
+    width: calc(100% - 44px);
+
+    font-size: 20px;
+    padding: 17px 0 0 22px;
+  }
+
+  .coupon-set-subject {
+    font-size: 70px;
+  }
+
+  .coupon-set-subject > small {
+    font-size: 40px;
+  }
+
+  .coupon-set-inner-right {
+    width: 44px;
+    background-size: 18px;
+    right: 0px;
+  }
+
+  .coupon-set-desc {
+    padding: 15px 22px;
+    font-size: 12px;
+    margin: 6px 0;
+  }
+
+  .btn-download-coupon {
+    height: 40px;
+    font-size: 16px;
+  }
+  .coupon-set-inner-right-deco {
+    display: none;
+  }
+}

@@ -1,0 +1,10 @@
+version: "3"
+services:
+    php53:
+        build:
+            context: .\php53
+            dockerfile: Dockerfile
+        volumes:
+            - E:\\koo_workspace\\lifelike_web:/var/www/html
+        ports:
+            - 80:80

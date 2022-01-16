@@ -1,0 +1,267 @@
+<? #!/usr/local/php53/bin/php
+include_once('../../common.php');
+include_once(G5_LIB_PATH.'/samjin.lib.php');
+
+//크론1 : 상품준비중 => 배송중, RFID 변경
+$connect_db = mssql_sql_connect(SAMJIN_MSSQL_HOST, SAMJIN_MSSQL_USER, SAMJIN_MSSQL_PASSWORD) or die('MSSQL Connect Error!!!');
+$g5['connect_samjindb'] = $connect_db;
+
+$test = false;
+
+echo "<br/>동기화 시작 : ".G5_TIME_YMDHIS."<br>";
+//1. 제품
+$sql = " select od_type, od_id, mb_id from lt_shop_order where od_type = 'O' and od_status = '상품준비중' and ifnull(od_invoice,'') = '' and ifnull(company_code,'') = '' ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+       
+    $wmsql = " SELECT	INV_NO, convert(varchar(19), CHOOLGO_DATE, 120) as CHOOLGO_DATE  ";
+    $wmsql .= " FROM	S_MALL_SALE_MAIN_MASTER";
+    $wmsql .= " where SM_SERIAL = N'{$disp_od_id}' ";
+    
+    $wmresult = mssql_sql_fetch($wmsql);
+    if($wmresult['INV_NO'] != ''){
+        //sql_query("update lt_shop_order set od_boxsend_invoice = '{$wmresult['INV_NO']}' where od_id = '{$row['od_id']}'; ");
+        
+        $change_status = '배송중';
+        $delivery['invoice'] = $wmresult['INV_NO'];
+        $delivery['invoice_time'] = $wmresult['CHOOLGO_DATE'];
+        $delivery['delivery_company'] = "CJ대한통운";
+        
+        $sql = " update {$g5['g5_shop_order_table']} set od_status = '{$change_status}', od_delivery_company = '{$delivery['delivery_company']}', od_invoice = '{$delivery['invoice']}', od_invoice_time = '{$delivery['invoice_time']}' where od_id = '{$row['od_id']}' and od_status = '상품준비중' ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        
+        $sql = " update {$g5['g5_shop_cart_table']} set ct_status = '{$change_status}' where od_id = '{$row['od_id']}' and ct_status = '상품준비중' ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        echo "<br/>상품 주문번호 : ".$disp_od_id." / 삼진운송장번호 : ".$wmresult['INV_NO']." / 출고일자:".$wmresult['CHOOLGO_DATE']."<br>";
+        
+        //RFID 처리
+        $wmdsql = " SELECT	RF_SERIAL, SM_SERIAL_1, SM_SERIAL_2 ";
+        $wmdsql .= " FROM	S_MALL_SALE_MAIN_DETAIL";
+        $wmdsql .= " where   SM_SERIAL_1 = N'{$disp_od_id}' AND RF_SERIAL is not null ";
+        
+        $wmdresult = mssql_sql_query($wmdsql);
+        for ($i=0; $md=mssql_sql_fetch_array($wmdresult); $i++)
+        {
+            $sql = " update lt_shop_order_item set RF_SERIAL = '{$md['RF_SERIAL']}' where od_id = '{$row['od_id']}' and od_sub_id = '{$md['SM_SERIAL_2']}' ";
+            if($test)
+            {
+                echo $sql."<br>";
+            }else{
+                sql_query($sql, true);
+            }
+            echo "<br/>상품 주문번호 : ".$disp_od_id." / 상품 주문 일련번호 : ".$md['SM_SERIAL_2']." / RFID 갱신:".$md['RF_SERIAL']."<br>";
+        }
+    } else {
+        echo "<br/>상품 주문번호 : ".$disp_od_id." / 삼진운송장번호 미등록 <br>";
+    }
+    
+    
+}
+
+//2. 리스
+$sql = " select od_type, od_id, mb_id from lt_shop_order where od_type = 'R' and od_status = '상품준비중' and ifnull(od_invoice,'') = ''  ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $wmsql = " SELECT	INV_NO, convert(varchar(19), CHOOLGO_DATE, 120) as CHOOLGO_DATE  ";
+    $wmsql .= " FROM	S_MALL_SALE_MAIN_MASTER";
+    $wmsql .= " where SM_SERIAL = N'{$disp_od_id}' ";
+    
+    $wmresult = mssql_sql_fetch($wmsql);
+    if($wmresult['INV_NO'] != ''){
+        $change_status = '배송중';
+        //sql_query("update lt_shop_order set od_boxsend_invoice = '{$wmresult['INV_NO']}' where od_id = '{$row['od_id']}'; ");
+        
+        $delivery['invoice'] = $wmresult['INV_NO'];
+        $delivery['invoice_time'] = $wmresult['CHOOLGO_DATE'];
+        $delivery['delivery_company'] = "CJ대한통운";
+        
+        $sql = " update {$g5['g5_shop_order_table']} set od_status = '{$change_status}', od_delivery_company = '{$delivery['delivery_company']}', od_invoice = '{$delivery['invoice']}', od_invoice_time = '{$delivery['invoice_time']}' where od_id = '{$row['od_id']}' and od_status = '상품준비중' ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        
+        $sql = " update {$g5['g5_shop_cart_table']} set ct_status = '{$change_status}' where od_id = '{$row['od_id']}' and ct_status = '상품준비중' ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        echo "<br/>리스 주문번호 : ".$disp_od_id." / 삼진운송장번호 : ".$wmresult['INV_NO']." / 출고일자:".$wmresult['CHOOLGO_DATE']."<br>";
+        
+        //RFID 처리
+        $wmdsql = " SELECT	RF_SERIAL, SM_SERIAL_1, SM_SERIAL_2 ";
+        $wmdsql .= " FROM	S_MALL_SALE_MAIN_DETAIL";
+        $wmdsql .= " where   SM_SERIAL_1 = N'{$disp_od_id}' AND RF_SERIAL is not null ";
+        
+        $wmdresult = mssql_sql_query($wmdsql);
+        for ($i=0; $md=mssql_sql_fetch_array($wmdresult); $i++)
+        {
+            $sql = " update lt_shop_order_item set RF_SERIAL = '{$md['RF_SERIAL']}' where od_id = '{$row['od_id']}' and od_sub_id = '{$md['SM_SERIAL_2']}' ";
+            if($test)
+            {
+                echo $sql."<br>";
+            }else{
+                sql_query($sql, true);
+            }
+            echo "<br/>상품 주문번호 : ".$disp_od_id." / 상품 주문 일련번호 : ".$md['SM_SERIAL_2']." / RFID 갱신:".$md['RF_SERIAL']."<br>";
+        }
+    } else {
+        echo "<br/>리스 주문번호 : ".$disp_od_id." / 삼진운송장번호 미등록 <br>";
+    }
+}
+
+
+//3. 세탁/보관 박스배송
+$sql = " select od_type, od_id from lt_shop_order where od_status = '수거박스배송' and ifnull(od_boxsend_invoice,'') = ''  ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $wmsql = " SELECT	INV_NO ";
+    $wmsql .= " FROM	S_MALL_WASHING_MASTER";
+    $wmsql .= " where SM_SERIAL = N'{$disp_od_id}' ";
+    
+    $wmresult = mssql_sql_fetch($wmsql);
+    if($wmresult['INV_NO'] != ''){
+        $sql = "update lt_shop_order set od_boxsend_invoice = '{$wmresult['INV_NO']}' where od_id = '{$row['od_id']}'; ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        echo "<br/>세탁/보관 박스배송 주문번호 : ".$disp_od_id." / 삼진운송장번호 : ".$wmresult['INV_NO']."<br>";
+    } else {
+        echo "<br/>세탁/보관 박스배송 주문번호 : ".$disp_od_id." / 삼진운송장번호 미등록 <br>";
+    }
+    
+}
+
+//RFID가 없는 주문건 처리
+$sql = " select a.od_type, a.od_id, a.od_sub_id, b.od_status
+            from  lt_shop_order_item a 
+                  inner join lt_shop_order b 
+                    on a.od_id = b.od_id
+            where a.RF_SERIAL = ''
+            and   b.od_status in ('상품준비중','배송중','배송완료','구매완료','리스중') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);    
+    
+    //RFID 처리
+    $wmdsql = " SELECT	RF_SERIAL, SM_SERIAL_1, SM_SERIAL_2 ";
+    $wmdsql .= " FROM	S_MALL_SALE_MAIN_DETAIL";
+    $wmdsql .= " where  SM_SERIAL_1 = N'{$disp_od_id}' AND SM_SERIAL_2 = N'{$row['od_sub_id']}' AND RF_SERIAL is not null ";
+    
+    $md = mssql_sql_fetch($wmdsql);
+    if($md){
+        $sql = " update lt_shop_order_item set RF_SERIAL = '{$md['RF_SERIAL']}' where od_id = '{$row['od_id']}' and od_sub_id = '{$md['SM_SERIAL_2']}' ";
+        if($test)
+        {
+            echo $sql."<br>";
+        }else{
+            sql_query($sql, true);
+        }
+        echo "<br/>주문번호 : ".$disp_od_id." / 상품 주문 일련번호 : ".$row['od_sub_id']." / RFID 갱신:".$md['RF_SERIAL']."<br>";
+    } else {
+        echo "<br/>주문번호 : ".$disp_od_id." / 상품 주문 일련번호 : ".$row['od_sub_id']." / RFID 조회 안됨<br>";
+    }
+}
+
+
+//5.전송안된 주문 재전송
+//제품
+$sql = " select od_type, od_id from lt_shop_order where od_type = 'O' and   od_status in ('상품준비중') and ifnull(od_invoice,'') = '' and ifnull(company_code,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','44','61') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_FINISH_SALE_DATA($row['od_id'], "상품준비중");
+    echo "<br/>상품 주문 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+//리스
+$sql = " select od_type, od_id from lt_shop_order where od_type = 'R' and   od_status in ('상품준비중') and ifnull(od_invoice,'') = '' and ifnull(company_code,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','43','44','61') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_FINISH_RENTAL_DATA($row['od_id'], "상품준비중");
+    echo "<br/>리스 주문 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+//세탁/보관
+$sql = " select od_type, od_id from lt_shop_order where od_type in ('L','K') and   od_status in ('수거박스배송') and ifnull(od_boxsend_invoice,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','43','44','61') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_ADD_CLEANING_REQUEST($row['od_id']);
+    echo "<br/>세탁/보관 주문 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+$sql = " select od_type, od_id from lt_shop_order where od_type in ('L','K') and od_status in ('배송완료','세탁완료','보관완료','서비스완료') and ifnull(od_boxsend_invoice,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','43','44','61') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_ADD_CLEANING_FINISH($row['od_id']);
+    echo "<br/>세탁/보관 완료 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+
+//수선
+$sql = " select od_type, od_id from lt_shop_order where od_type = 'S' and ifnull(od_samjin_chk,'') in ('43') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_ADD_REPAIR_REQUEST($row['od_id']);
+    echo "<br/>수선 주문 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+
+$sql = " select od_type, od_id from lt_shop_order where od_type = 'S' and od_status in ('수선중') and ifnull(od_boxsend_invoice,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','43','44','61') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_ADD_REPAIR_REQUEST($row['od_id']);
+    echo "<br/>수선 주문 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+
+$sql = " select od_type, od_id from lt_shop_order where od_type = 'S' and od_status in ('배송완료','수선완료','서비스완료') and ifnull(od_boxsend_invoice,'') = '' and ifnull(od_samjin_chk,'') not in ('0','1','43','44','61','87') ";
+$result = sql_query($sql);
+for ($i=0; $row=sql_fetch_array($result); $i++)
+{
+    $disp_od_id = $row['od_type'].'-'.substr($row['od_id'],0,8).'-'.substr($row['od_id'],8,6);
+    
+    $r = SM_ADD_REPAIR_FINISH($row['od_id']);
+    echo "<br/>수선 완료 재전송 : ".$disp_od_id." / 결과 : ".$r['RSLT_CODE'].", ".$r['RSLT_ITEM']."<br>";
+}
+
+
+echo "<br/>동기화 종료 : ".date('Y-m-d H:i:s', time())."<br>";
+?>

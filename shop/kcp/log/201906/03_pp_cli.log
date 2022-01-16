@@ -1,0 +1,10 @@
+0603-161433.1559546 -  1724 - T000063GEX2aOskJ - MSG : TX_START - site_cd=[T0000]+tx_cd=[00200000]+ordr_idxx=[]+log_level=[3]
+0603-161433.1559546 -  1724 - T000063GEX2aOskJ - MSG : PG_서버_접속__정상
+0603-161433.1559546 -  1724 - T000063GEX2aOskJ - MSG : PG_서버_요청_전문_전송__정상
+0603-161433.1559546 -  1724 - T000063GEX2aOskJ - MSG : PG_서버_응답_전문_수신__정상
+0603-161433.1559546 -  1724 - T000063GEX2aOskJ - MSG : TX_ENDED - ordr_idxx=[]+res=[res_cd=8072res_msg=포맷에러(변경|거래번호)res_en_msg=trace_no=T000063GEX2aOskJ]
+0603-161545.1559546 -  6500 - T000063GFj2aOskJ - MSG : TX_START - site_cd=[T0000]+tx_cd=[00200000]+ordr_idxx=[]+log_level=[3]
+0603-161545.1559546 -  6500 - T000063GFj2aOskJ - MSG : PG_서버_접속__정상
+0603-161545.1559546 -  6500 - T000063GFj2aOskJ - MSG : PG_서버_요청_전문_전송__정상
+0603-161545.1559546 -  6500 - T000063GFj2aOskJ - MSG : PG_서버_응답_전문_수신__정상
+0603-161545.1559546 -  6500 - T000063GFj2aOskJ - MSG : TX_ENDED - ordr_idxx=[]+res=[res_cd=8072res_msg=포맷에러(변경|거래번호)res_en_msg=trace_no=T000063GFj2aOskJ]

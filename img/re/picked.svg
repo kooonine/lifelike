@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="67" height="67" viewBox="0 0 67 67">
+    <defs>
+        <filter id="prefix__a" width="118.8%" height="105.5%" x="-4.7%" y="-2.8%" filterUnits="objectBoundingBox">
+            <feOffset dx="2" in="SourceAlpha" result="shadowOffsetOuter1"/>
+            <feGaussianBlur in="shadowOffsetOuter1" result="shadowBlurOuter1" stdDeviation=".5"/>
+            <feColorMatrix in="shadowBlurOuter1" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.1 0"/>
+        </filter>
+        <path id="prefix__b" d="M59.992 -1L60 89.325 28.01 57.335 28 30.992z"/>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <g transform="translate(2 -23) scale(-1 1) rotate(45 0 -62.063)">
+            <use fill="#000" filter="url(#prefix__a)" xlink:href="#prefix__b"/>
+            <use fill="#FFF" xlink:href="#prefix__b"/>
+        </g>
+        <text fill="#000" font-family="Montserrat-SemiBold, Montserrat" font-size="16" font-weight="500" transform="translate(2 -23) rotate(45 44 44.5)">
+            <tspan x="24.072" y="50">PICK</tspan>
+        </text>
+    </g>
+</svg>

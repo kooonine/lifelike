@@ -1,0 +1,110 @@
+@media print { 
+    #pring3_table{
+        width : 100%;
+        border: 0px;
+        border-collapse:collapse;
+        font-size: 12px;
+    }
+    #pring3_table tbody.main_body{border: 2px solid black;}
+    #pring3_a4 {
+        height: 842px;
+        width: 700px !important;
+        /* to centre page on screen*/
+        margin-left: auto;
+        margin-right: auto;
+    }
+    #pring3_table tr, #pring3_table th ,  #pring3_table td {
+        border: 1px solid black ;
+    }
+    #pring3_table tr.noborder, #pring3_table tr.noborder th ,   #pring3_table tr.noborder td {
+        border: 0px ;
+    }
+    #pring3_table tr{height: 25px;}
+    #pring3_table tr.h50{height: 50px; font-size: 15px;}
+
+    #pring3_table th{
+        background-color: #e4e2e2 ;
+    }
+    .txt_center{ text-align: center;}
+    .txt_left{ text-align: left;}
+    .txt_right{text-align: right; padding-right : 3px;}
+    
+    h2{text-align: center; text-decoration: underline;}
+    input{border: 0px ; width: 100%;}
+    
+    #comfirm_table{
+        width : 55%;
+        border: 1px solid black;
+        border-collapse:collapse;
+        font-size: 12px;
+        float: right;
+        margin-top: 24px;
+    
+    }
+    #comfirm_table tr, #comfirm_table th ,  #comfirm_table td {
+        border: 1px solid black ;
+    }
+    .hei_50{height: 50px;}
+    .noprint{display: none !important;}
+    .font9{font-size: 9px !important; font-weight: normal; color: black;}
+    .font10{font-size: 10px !important; font-weight: normal; color: black;}
+    .font11{font-size: 11px !important; font-weight: normal; color: black;}
+    .input_red{font-size: 10px !important; color: red;}
+    .input_nor{font-size: 10px !important;}
+    .balju_select {-webkit-appearance: none; text-align-last: left; border : 0px; padding: 0px;}
+    
+    input.noborder {font-size: 10px; }
+}
+#pring3_table{
+    width : 100%;
+    border: 0px;
+    border-collapse:collapse;
+    font-size: 12px;
+}
+#pring3_table tbody.main_body{border: 2px solid black;}
+#pring3_a4 {
+    height: 842px;
+    width: 700px;
+    /* to centre page on screen*/
+    margin-left: auto;
+    margin-right: auto;
+}
+#pring3_table tr, #pring3_table th ,  #pring3_table td {
+    border: 1px solid black ;
+}
+#pring3_table tr.noborder, #pring3_table tr.noborder th ,   #pring3_table tr.noborder td {
+    border: 0px ;
+}
+#pring3_table tr{height: 25px;}
+#pring3_table tr.h50{height: 50px; font-size: 15px;}
+#pring3_table th{
+    background-color: #e4e2e2 ;
+}
+.txt_center{ text-align: center;}
+.txt_left{ text-align: left;}
+.txt_right{text-align: right; padding-right : 3px;}
+
+h2{text-align: center; text-decoration: underline;}
+input{border: 0px ; width: 100%;}
+
+#comfirm_table{
+    width : 55%;
+    border: 1px solid black;
+    border-collapse:collapse;
+    font-size: 12px;
+    float: right;
+    margin-top: 24px;
+
+}
+#comfirm_table tr, #comfirm_table th ,  #comfirm_table td {
+    border: 1px solid black ;
+}
+.hei_50{height: 50px;}
+.font9{font-size: 9px !important; font-weight: normal; color: black;}
+.font10{font-size: 10px !important; font-weight: normal; color: black;}
+.font11{font-size: 11px !important; font-weight: normal; color: black;}
+.input_red{font-size: 10px; color: red;}
+.input_nor{font-size: 10px;}
+table#pring3_table tr th#LRnob{border-left: 0px !important; border-right: 0px !important;}
+
+input.noborder {font-size: 10px; }

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="21" height="21" viewBox="0 0 21 21">
+    <g fill="#959595">
+        <path d="M1.373 11.25L11.25 1.373 10.294 0.417 0.417 10.293z" transform="rotate(45 2.534 13.8)"/>
+        <path d="M1.373 11.25L11.25 1.373 10.294 0.417 0.417 10.293z" transform="rotate(45 2.534 13.8) matrix(-1 0 0 1 11.667 0)"/>
+    </g>
+</svg>

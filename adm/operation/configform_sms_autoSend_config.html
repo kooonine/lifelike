@@ -1,0 +1,1205 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="imagetoolbar" content="no">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<title>메시지 발송내역 | LITANDARD</title>
+<link rel="stylesheet" href="./css/admin.css">
+
+<!--[if lte IE 8]>
+<script src="../js/html5.js"></script>
+<![endif]-->
+<script>
+// 자바스크립트에서 사용하는 전역변수 선언
+var g5_url       = "http://litandard.letzdev.com";
+var g5_bbs_url   = "../bbs";
+var g5_is_member = "1";
+var g5_is_admin  = "super";
+var g5_is_mobile = "";
+var g5_bo_table  = "";
+var g5_sca       = "";
+var g5_editor    = "";
+var g5_cookie_domain = "";
+var g5_admin_url = ".";
+</script>
+
+<link href="./vendors/bootstrap-datetimepicker/build/css/bootstrap-datetimepicker.css" rel="stylesheet">
+
+<!-- Bootstrap -->
+<link href="./vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+<!-- Font Awesome -->
+<link href="./vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+<!-- NProgress -->
+<link href="./vendors/nprogress/nprogress.css" rel="stylesheet">
+
+<!-- Custom Theme Style -->
+<link href="./css/custom.min.css" rel="stylesheet">
+<!-- iCheck -->
+<link href="./vendors/iCheck/skins/flat/green.css" rel="stylesheet">
+
+<!-- bootstrap-progressbar -->
+<link href="./vendors/bootstrap-progressbar/css/bootstrap-progressbar-3.3.4.min.css" rel="stylesheet">
+
+<!-- jQuery -->
+<script src="./vendors/jquery/dist/jquery.min.js"></script>
+<!-- Bootstrap -->
+<script src="./vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- FastClick -->
+<script src="./vendors/fastclick/lib/fastclick.js"></script>
+<!-- NProgress -->
+<script src="./vendors/nprogress/nprogress.js"></script>
+<!-- bootstrap-progressbar -->
+<script src="./vendors/bootstrap-progressbar/bootstrap-progressbar.min.js"></script>
+<!-- iCheck -->
+<script src="./vendors/iCheck/icheck.min.js"></script>
+<script src="./vendors/moment/min/moment.min.js"></script>
+
+<script src="../js/common.js?ver=171222"></script>
+
+<script src="http://dmaps.daum.net/map_js_init/postcode.v2.js"></script>
+<script src="./vendors/bootstrap-datetimepicker/build/js/bootstrap-datetimepicker.min.js"></script>
+
+<script src="./vendors/datatables.net/js/jquery.dataTables.min.js"></script>
+<script src="./vendors/datatables.net-bs/js/dataTables.bootstrap.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+<script src="./vendors/datatables.net-buttons-bs/js/buttons.bootstrap.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.flash.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.html5.min.js"></script>
+<script src="./vendors/datatables.net-buttons/js/buttons.print.min.js"></script>
+<script src="./vendors/datatables.net-fixedheader/js/dataTables.fixedHeader.min.js"></script>
+<script src="./vendors/datatables.net-keytable/js/dataTables.keyTable.min.js"></script>
+<script src="./vendors/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+<script src="./vendors/datatables.net-responsive-bs/js/responsive.bootstrap.js"></script>
+<script src="./vendors/datatables.net-scroller/js/dataTables.scroller.min.js"></script>
+
+</head>
+<body class="nav-md" >
+
+<script>
+var tempX = 0;
+var tempY = 0;
+
+function imageview(id, w, h)
+{
+
+    menu(id);
+
+    var el_id = document.getElementById(id);
+
+    //submenu = eval(name+".style");
+    submenu = el_id.style;
+    submenu.left = tempX - ( w + 11 );
+    submenu.top  = tempY - ( h / 2 );
+
+    selectBoxVisible();
+
+    if (el_id.style.display != 'none')
+        selectBoxHidden(id);
+}
+</script>
+
+	<div class="container body">
+      <div class="main_container">
+        <div class="col-md-3 left_col">
+          <div class="left_col scroll-view">
+            <div class="navbar nav_title" style="border: 0;">
+				<a href="." class="site_title">LITANDARD 관리자</a>
+            </div>
+
+			<div class="clearfix"></div>
+            <br />
+
+            <!-- sidebar menu -->
+            <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+
+
+              <div class="menu_section">
+                <ul class="nav side-menu">
+
+                  <li><a> 환경설정 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./config_form.php" >기본환경설정</a></li><li><a href="./auth_list.php" >관리권한설정</a></li><li><a href="./theme.php" >테마설정</a></li><li><a href="./menu_list.php" >메뉴설정</a></li><li><a href="./sendmail_test.php" >메일 테스트</a></li><li><a href="./newwinlist.php" >팝업레이어관리</a></li><li><a href="./session_file_delete.php" >세션파일 일괄삭제</a></li><li><a href="./cache_file_delete.php" >캐시파일 일괄삭제</a></li><li><a href="./captcha_file_delete.php" >캡챠파일 일괄삭제</a></li><li><a href="./thumbnail_file_delete.php" >썸네일파일 일괄삭제</a></li><li><a href="./phpinfo.php" >phpinfo()</a></li><li><a href="./browscap.php" >Browscap 업데이트</a></li><li><a href="./browscap_convert.php" >접속로그 변환</a></li><li><a href="./dbupgrade.php" >DB업그레이드</a></li><li><a href="./service.php" >부가서비스</a></li></ul>				  </li>
+
+                  <li><a> 환경설정관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>기본환경설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_biz.php">사업자정보</a></li><li><a href="./configform_pwd.php">비밀번호변경</a></li><li><a href="./configform_stipulation.php">이용약관설정</a></li><li><a href="./configform_etc.php">기타이용안내설정</a></li><li><a href="./configform_privacy.php">개인정보제공설정</a></li></ul></li><li><a>사이트환경관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_ip.php">IP접속제한관리</a></li><li><a href="./configformip_visit.php">방문자분석</a></li><li><a href="./configform_search.php">검색엔진 최적화</a></li><li><a href="./configform_mail.php">메일발송환경설정</a></li></ul></li><li><a>회원등급관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_usergrade.php">회원등급설정</a></li></ul></li><li><a>결제정보관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_payment.php">결제방식설정</a></li><li><a href="./configform_cash.php">현금영수증서비스</a></li><li><a href="./configform_tax.php">세금계산서서비스</a></li></ul></li><li><a>배송관리 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_delivery.php">배송/반품설정</a></li><li><a href="./configform_deliverycompany.php">배송업체관리</a></li></ul></li><li><a>관리자 권한설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./configform_admin.php">관리자 리스트</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./member_list.php" >회원관리</a></li><li><a href="./mail_list.php" >회원메일발송</a></li><li><a href="./visit_list.php" >접속자집계</a></li><li><a href="./visit_search.php" >접속자검색</a></li><li><a href="./visit_delete.php" >접속자로그삭제</a></li><li><a href="./point_list.php" >포인트관리</a></li><li><a href="./poll_list.php" >투표관리</a></li></ul>				  </li>
+
+                  <li><a> 회원관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a>회원설정 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_config.php">회원가입항목설정</a></li></ul></li><li><a>회원정보 <span class="fa fa-chevron-down"></span></a><ul class="nav child_menu"><li><a href="./member_list.php">회원정보조회</a></li></ul></li></ul>				  </li>
+
+                  <li><a> 게시판관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./board_list.php" >게시판관리</a></li><li><a href="./boardgroup_list.php" >게시판그룹관리</a></li><li><a href="./popular_list.php" >인기검색어관리</a></li><li><a href="./popular_rank.php" >인기검색어순위</a></li><li><a href="./qa_config.php" >1:1문의설정</a></li><li><a href="./contentlist.php" >내용관리</a></li><li><a href="./faqmasterlist.php" >FAQ관리</a></li><li><a href="./write_count.php" >글,댓글 현황</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/configform.php" >쇼핑몰설정</a></li><li><a href="./shop_admin/orderlist.php" >주문내역</a></li><li><a href="./shop_admin/personalpaylist.php" >개인결제관리</a></li><li><a href="./shop_admin/categorylist.php" >분류관리</a></li><li><a href="./shop_admin/itemlist.php" >상품관리</a></li><li><a href="./shop_admin/itemqalist.php" >상품문의</a></li><li><a href="./shop_admin/itemuselist.php" >사용후기</a></li><li><a href="./shop_admin/itemstocklist.php" >상품재고관리</a></li><li><a href="./shop_admin/itemtypelist.php" >상품유형관리</a></li><li><a href="./shop_admin/optionstocklist.php" >상품옵션재고관리</a></li><li><a href="./shop_admin/couponlist.php" >쿠폰관리</a></li><li><a href="./shop_admin/couponzonelist.php" >쿠폰존관리</a></li><li><a href="./shop_admin/sendcostlist.php" >추가배송비관리</a></li><li><a href="./shop_admin/inorderlist.php" >미완료주문</a></li></ul>				  </li>
+
+                  <li><a> 쇼핑몰현황/기타 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./shop_admin/sale1.php" >매출현황</a></li><li><a href="./shop_admin/itemsellrank.php" >상품판매순위</a></li><li><a href="./shop_admin/orderprint.php" >주문내역출력</a></li><li><a href="./shop_admin/itemstocksms.php" >재입고SMS알림</a></li><li><a href="./shop_admin/itemevent.php" >이벤트관리</a></li><li><a href="./shop_admin/itemeventlist.php" >이벤트일괄처리</a></li><li><a href="./shop_admin/bannerlist.php" >배너관리</a></li><li><a href="./shop_admin/wishlist.php" >보관함현황</a></li><li><a href="./shop_admin/price.php" >가격비교사이트</a></li></ul>				  </li>
+
+                  <li><a> SMS 관리 <span class="fa fa-chevron-down"></span></a>
+					<ul class="nav child_menu"><li><a href="./sms_admin/config.php" >SMS 기본설정</a></li><li><a href="./sms_admin/member_update.php" >회원정보업데이트</a></li><li><a href="./sms_admin/sms_write.php" >문자 보내기</a></li><li><a href="./sms_admin/history_list.php" >전송내역-건별</a></li><li><a href="./sms_admin/history_num.php" >전송내역-번호별</a></li><li><a href="./sms_admin/form_group.php" >이모티콘 그룹</a></li><li><a href="./sms_admin/form_list.php" >이모티콘 관리</a></li><li><a href="./sms_admin/num_group.php" >휴대전화번호 그룹</a></li><li><a href="./sms_admin/num_book.php" >휴대전화번호 관리</a></li><li><a href="./sms_admin/num_book_file.php" >휴대전화번호 파일</a></li></ul>				  </li>
+				                </ul>
+              </div>
+
+            </div>
+            <!-- /sidebar menu -->
+
+            <!-- /menu footer buttons
+            <div class="sidebar-footer hidden-small">
+              <a data-toggle="tooltip" data-placement="top" title="Settings">
+                <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Lock">
+                <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+              </a>
+              <a data-toggle="tooltip" data-placement="top" title="Logout" href="login.html">
+                <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+              </a>
+            </div>
+			 -->
+            <!-- /menu footer buttons -->
+          </div>
+        </div>
+
+		<!-- top navigation -->
+        <div class="top_nav">
+          <div class="nav_menu">
+            <nav>
+              <div class="nav toggle">
+                <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+              </div>
+
+              <ul class="nav navbar-nav navbar-right">
+
+                <li class="" id="tnb_logout"><a href="../bbs/logout.php">로그아웃</a></li>
+				<li class=""><a href="../" class="tnb_shop" target="_blank" title="쇼핑몰 바로가기">쇼핑몰 이동</a></li>
+				<li class=""><a href="./member_form.php?w=u&amp;mb_id=admin">관리자정보</a></li>
+				<li class=""><a href="javascript:;">최고관리자 님</a></li>
+
+              </ul>
+            </nav>
+          </div>
+        </div>
+        <!-- /top navigation -->
+
+<script>
+jQuery(function($){
+
+    var menu_cookie_key = 'g5_admin_btn_gnb';
+
+    $(".tnb_mb_btn").click(function(){
+        $(".tnb_mb_area").toggle();
+    });
+
+    $("#btn_gnb").click(function(){
+
+        var $this = $(this);
+
+        try {
+            if( ! $this.hasClass("btn_gnb_open") ){
+                set_cookie(menu_cookie_key, 1, 60*60*24*365);
+            } else {
+                delete_cookie(menu_cookie_key);
+            }
+        }
+        catch(err) {
+        }
+
+        $("#container").toggleClass("container-small");
+        $("#gnb").toggleClass("gnb_small");
+        $this.toggleClass("btn_gnb_open");
+
+    });
+
+    $(".gnb_ul li .btn_op" ).click(function() {
+        $(this).parent().addClass("on").siblings().removeClass("on");
+    });
+
+});
+</script>
+
+		<!-- page content -->
+        <div class="right_col" role="main">
+          <div class="">
+            <div class="page-title">
+              <div class="title_left">
+                <h3>메시지 발송 관리</h3>
+              </div>
+
+			  <div class="title_right">
+                <div class="col-md-5 col-sm-5 col-xs-12 pull-right">
+	                <h5> 홈 > 운영관리 > 메시지발송관리 > SMS </h5>
+                </div>
+              </div>
+
+
+            </div>
+            <div class="clearfix"></div>
+
+
+
+
+
+<!-- @START@ 내용부분 시작 -->
+
+<div class="row">
+  <div class="col-md-12 col-sm-12 col-xs-12">
+  	<div class="x_panel">
+
+      <form name="fconfigform" id="fconfigform" method="post" onsubmit="return fconfigform_submit(this);" data-parsley-validate class="form-horizontal form-label-left">
+    	<input type="hidden" name="token" value="" id="token">
+
+    		<div class="x_content">
+
+    			<div class="" role="tabpanel" data-example-id="togglable-tabs">
+    			  <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+    				<li role="presentation" class="active"><a href="#tab_content1" id="sms-tab" role="tab" data-toggle="tab" aria-expanded="true">SMS</a>
+    				</li>
+    				<li role="presentation" class=""><a href="#tab_content2" role="tab" id="kakao-tab" data-toggle="tab" aria-expanded="false">카카오톡</a>
+    				</li>
+    			  </ul>
+    			  <div class="clearfix"></div>
+
+    			  <div id="myTabContent" class="tab-content">
+    				<div role="tabpanel" class="tab-pane fade active in" id="tab_content1" aria-labelledby="sms-tab">
+
+    					<div class="" role="tabpanel2" data-example-id="togglable-tabs">
+                          <ul id="myTab1" class="nav nav-tabs bar_tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#sms_order_info" id="sms_order_info-tab" role="tab" data-toggle="tab" aria-expanded="true">주문관련</a>
+    						</li>
+                            <li role="presentation" class=""><a href="#sms_user_info" role="tab" id="sms_user_info-tab" data-toggle="tab" aria-expanded="false">회원관련</a>
+    						</li>
+                            <li role="presentation" class=""><a href="#sms_board_info" role="tab" id="sms_board_info-tab" data-toggle="tab" aria-expanded="false">게시판관련</a>
+    						</li>
+                            <li role="presentation" class=""><a href="#sms_ad_info" role="tab" id="sms_ad_info-tab" data-toggle="tab" aria-expanded="false">광고관련</a>
+    						</li>
+
+
+                          </ul>
+    					  <div class="clearfix"></div>
+                <div id="myTabContent2" class="tab-content">
+
+                  <div role="tabpanel2" class="tab-pane fade active in" id="sms_order_info" aria-labelledby="sms_order_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 주문관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                      <table>
+                        <thead>
+                          <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                          <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                          <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td rowspan="3" class="text-center">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <span name="sms_send_case" name="new_order" send_case="new_order">신규 주문 안내</span><br>
+                                <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                  <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="new_order"/> 고객  </label>
+                                  <br>
+                                  <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="new_order"/> 운영자  </label>
+
+                                </div>
+                              </div>
+                            </th>
+                            <td rowspan="3">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="new_order"></textarea>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                  <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="new_order">미리보기</button>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                  <span name="sms_contents_guest_counter" send_case="new_order"><font color='red'>0</font>/300</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td rowspan="3">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="new_order"></textarea>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                  <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="new_order">미리보기</button>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                  <span name="sms_contents_operator_counter" send_case="new_order"><font color='red'>0</font>/300</span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+
+                          <tr></tr>
+                          <tr></tr>
+                          <tr></tr>
+                          <tr>
+                            <td rowspan="3" class="text-center">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <span name="sms_send_case" name="deposit_info" send_case="deposit_info">입금 안내</span><br>
+                                <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                  <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="deposit_info"/> 고객  </label>
+                                  <br>
+                                  <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="deposit_info"/> 운영자  </label>
+
+                                </div>
+                              </div>
+                            </th>
+                            <td rowspan="3">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="deposit_info"></textarea>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                  <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="deposit_info">미리보기</button>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                  <span name="sms_contents_guest_counter" send_case="deposit_info"><font color='red'>0</font>/300</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td rowspan="3">
+                              <div class="container col-md-6 col-sm-6 col-xs-12">
+                                <div class="col-md-12 col-sm-12 col-xs-12">
+                                  <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="deposit_info"></textarea>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                  <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="deposit_info">미리보기</button>
+                                </div>
+                                <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                  <span name="sms_contents_operator_counter" send_case="deposit_info"><font color='red'>0</font>/300</span>
+                                </div>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+
+                      </table>
+                    </div>
+                  </div>
+
+                  <div role="tabpanel2" class="tab-pane fade" id="sms_user_info" aria-labelledby="sms_user_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 회원관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="pw_change" send_case="pw_change">비밀번호 변경 안내</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="pw_change"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="pw_change"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="pw_change"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="pw_change">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="pw_change"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="pw_change"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="pw_change">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="pw_change"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="coupon_push" send_case="coupon_push">쿠폰 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="coupon_push"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="coupon_push"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="coupon_push"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="coupon_push">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="coupon_push"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="coupon_push"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="coupon_push">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="coupon_push"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+                  <div role="tabpanel2" class="tab-pane fade" id="sms_board_info" aria-labelledby="sms_board_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 게시판관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="new_contents" send_case="new_contents">새 글 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="new_contents"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="new_contents"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="new_contents"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="new_contents">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="new_contents"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="new_contents"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="new_contents">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="new_contents"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="new_comments" send_case="new_comments">새 댓글 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="new_comments"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="new_comments"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="new_comments"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="new_comments">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="new_comments"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="new_comments"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="new_comments">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="new_comments"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+                  <div role="tabpanel2" class="tab-pane fade" id="sms_ad_info" aria-labelledby="sms_ad_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 광고관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="term_expiry" send_case="pw_change">광고 기간 만료</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="term_expiry"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="term_expiry"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="term_expiry"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="term_expiry">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="term_expiry"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="term_expiry"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="term_expiry">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="term_expiry"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="sms_send_case" name="ad_apply" send_case="ad_apply">광고 신청</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_guest" value = "guest" send_case="ad_apply"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="sms_send_case" id="sms_send_case_operator" value = "operator" send_case="ad_apply"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_guest" send_case="ad_apply"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_guest" send_case="ad_apply">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_guest_counter" send_case="ad_apply"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="sms_contents_operator" send_case="ad_apply"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="sms_priview" data="sms_contents_operator" send_case="ad_apply">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="sms_contents_operator_counter" send_case="ad_apply"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+                </div>
+              </div>
+
+    				</div>
+            <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="kakao-tab">
+              <div class="" role="tabpanel2" data-example-id="togglable-tabs">
+                          <ul id="myTab1" class="nav nav-tabs bar_tabs" role="tablist">
+                            <li role="presentation" class="active"><a href="#kakao_order_info" id="kakao_order_info-tab" role="tab" data-toggle="tab" aria-expanded="true">주문관련</a>
+    						</li>
+                            <li role="presentation" class=""><a href="#kakao_user_info" role="tab" id="kakao_user_info-tab" data-toggle="tab" aria-expanded="false">회원관련</a>
+    						</li>
+                            <li role="presentation" class=""><a href="#kakao_board_info" role="tab" id="kakao_board_info-tab" data-toggle="tab" aria-expanded="false">게시판관련</a>
+    						</li>
+
+
+                          </ul>
+    					  <div class="clearfix"></div>
+                <div id="myTabContent2" class="tab-content">
+
+                  <div role="tabpanel2" class="tab-pane fade active in" id="kakao_order_info" aria-labelledby="kakao_order_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 주문관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" name="new_order" send_case="new_order">신규 주문 안내</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="new_order"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="new_order"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="new_order"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="new_order">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="new_order"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="new_order"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="new_order">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="new_order"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" name="deposit_info" send_case="deposit_info">입금 안내</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="deposit_info"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="deposit_info"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="deposit_info"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="deposit_info">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="deposit_info"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="deposit_info"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="deposit_info">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="deposit_info"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+                  <div role="tabpanel2" class="tab-pane fade" id="kakao_user_info" aria-labelledby="kakao_user_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 회원관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" name="pw_change" send_case="pw_change">비밀번호 변경 안내</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="pw_change"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="pw_change"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="pw_change"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="pw_change">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="pw_change"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="pw_change"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="pw_change">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="pw_change"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" name="coupon_push"  send_case="coupon_push">쿠폰 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="coupon_push"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="coupon_push"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="coupon_push"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="coupon_push">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="coupon_push"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="coupon_push"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="coupon_push">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="coupon_push"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+                  <div role="tabpanel2" class="tab-pane fade" id="kakao_board_info" aria-labelledby="kakao_board_info-tab">
+      							<div class="x_title">
+      								<h4><span class="fa fa-check-square"></span> 게시판관련 <small></small></h4>
+      								<div class="clearfix"></div>
+      							</div>
+                    <div class="tbl_head01 tbl_wrap">
+                    <table>
+                      <thead>
+                        <th class="col-md-2 col-sm-2 col-xs-12 text-center">발송케이스</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">고객</th>
+                        <th class="col-md-5 col-sm-5 col-xs-12 text-center">운영자</th>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" send_case="new_contents">새 글 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="new_contents"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="new_contents"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="new_contents"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="new_contents">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="new_contents"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="new_contents"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="new_contents">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="kakao_contents"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+
+                        <tr></tr>
+                        <tr></tr>
+                        <tr></tr>
+                        <tr>
+                          <td rowspan="3" class="text-center">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <span name="kakao_send_case" send_case="new_comments">새 댓글 알림</span><br>
+                              <div class="btn-group text-left col-md-12 col-sm-12 col-xs-12" data-toggle="buttons">
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_guest" value = "guest" send_case="new_comments"/> 고객  </label>
+                                <br>
+                                <label><input type="checkbox" name="kakao_send_case" id="kakao_send_case_operator" value = "operator" send_case="new_comments"/> 운영자  </label>
+
+                              </div>
+                            </div>
+                          </th>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_guest" send_case="new_comments"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_guest" send_case="new_comments">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_guest_counter" send_case="new_comments"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                          <td rowspan="3">
+                            <div class="container col-md-6 col-sm-6 col-xs-12">
+                              <div class="col-md-12 col-sm-12 col-xs-12">
+                                <textarea class="resizable_textarea form-control" name="kakao_contents_operator" send_case="new_comments"></textarea>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-left">
+                                <button type = 'button' class="btn btn-sm btn-default" name="kakao_priview" data="kakao_contents_operator" send_case="new_comments">미리보기</button>
+                              </div>
+                              <div class="col-md-6 col-sm-6 col-xs-12 text-right">
+                                <span name="kakao_contents_operator_counter" send_case="new_comments"><font color='red'>0</font>/300</span>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+
+                    </table>
+                  </div>
+                  </div>
+
+
+
+                </div>
+              </div>
+    				</div>
+    			</div>
+
+    		</div>
+
+
+    	  <div class="x_content">
+    		  <div class="form-group">
+    			<div class="col-md-12 col-sm-12 col-xs-12 text-right">
+    			  <input type="submit" class="btn btn-success" value="메시지 저장"></input>
+    			</div>
+    		  </div>
+    	  </div>
+
+    	</form>
+
+  	</div>
+
+
+  </div>
+
+
+</div>
+
+
+
+<script>
+$(document).ready(function() {
+  $('textarea[name*="contents"]').keyup(function (e){
+
+      var content = $(this).val();
+      var counter_id = $(this).attr('name')+'_counter';
+      var send_case = $(this).attr('send_case');
+
+
+    //  $(this).height(((content.split('\n').length + 1) * 1.5) + 'em');
+      $('span[name='+counter_id+'][send_case='+send_case+']').html('<font color="red">'+content.length + '</font>/300');
+  });
+});
+
+
+
+$('button[name="sms_priview"]').click(function(){
+  var data_id = $(this).attr('data');
+  var data_counter_id = $(this).attr('data')+'_counter';
+  var send_case = $(this).attr('send_case');
+  $('#priview_Label').html($('span[name=sms_send_case][send_case='+send_case+']').text());
+  $('#priview_textarea').val($('textarea[name='+data_id+'][send_case='+send_case+']').val());
+  $('#priview_counter').html($('span[name='+data_counter_id+'][send_case='+send_case+']').text());
+  $('#priview_modal').modal('toggle');
+});
+$('button[name="kakao_priview"]').click(function(){
+  var data_id = $(this).attr('data');
+  var data_counter_id = $(this).attr('data')+'_counter';
+  var send_case = $(this).attr('send_case');
+  $('#priview_Label').html($('span[name=sms_send_case][send_case='+send_case+']').text());
+  $('#priview_textarea').val($('textarea[name='+data_id+'][send_case='+send_case+']').val());
+  $('#priview_counter').html($('span[name='+data_counter_id+'][send_case='+send_case+']').text());
+  $('#priview_modal').modal('toggle');
+});
+$(function(){
+
+
+});
+
+function fconfigform_submit(f)
+{
+    f.action = "./configform_delivery_update.php";
+    return true;
+}
+</script>
+
+
+
+
+<!-- @END@ 내용부분 끝 -->
+
+
+			</div>
+        </div>
+        <!-- /page content -->
+
+		<!-- footer content -->
+        <footer>
+          <div class="pull-right">
+            Copyright &copy; litandard.letzdev.com. All rights reserved.
+          </div>
+          <div class="clearfix"></div>
+        </footer>
+        <!-- /footer content -->
+      </div>
+    </div>
+
+
+<script>
+$(".scroll_top").click(function(){
+     $("body,html").animate({scrollTop:0},400);
+})
+</script>
+
+<!-- <p>실행시간 : 0 -->
+
+<script src="./admin.js?ver=171222"></script>
+<script src="../js/jquery.anchorScroll.js?ver=171222"></script>
+
+<!-- Custom Theme Scripts -->
+<script src="./js/custom.min.js"></script>
+
+<script>
+
+
+$(function(){
+
+    var admin_head_height = $("#hd_top").height() + $("#container_title").height() + 5;
+
+    $("a[href^='#']").anchorScroll({
+        scrollSpeed: 0, // scroll speed
+        offsetTop: admin_head_height, // offset for fixed top bars (defaults to 0)
+        onScroll: function () {
+          // callback on scroll start
+        },
+        scrollEnd: function () {
+          // callback on scroll end
+        }
+    });
+
+    var hide_menu = false;
+    var mouse_event = false;
+    var oldX = oldY = 0;
+
+    $(document).mousemove(function(e) {
+        if(oldX == 0) {
+            oldX = e.pageX;
+            oldY = e.pageY;
+        }
+
+        if(oldX != e.pageX || oldY != e.pageY) {
+            mouse_event = true;
+        }
+    });
+
+
+});
+
+</script>
+
+
+<div class="modal fade" id="priview_modal" tabindex="-1" role="dialog" aria-labelledby="priview_modal">
+  <div class="modal-dialog modal-sm" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="priview_Label"></h4>
+      </div>
+      <div class="modal-body">
+        <div id="scf_sms">
+            <section class="scf_sms_box">
+                <div class="scf_sms_img">
+                    <textarea id="priview_textarea" name="priview_textarea" ></textarea>
+                </div>
+                <span id="priview_counter" class="scf_sms_cnt">0 / 300</span>
+            </section>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">닫기</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- <div style='float:left; text-align:center;'>RUN TIME : 0<br></div> -->
+<!-- ie6,7에서 사이드뷰가 게시판 목록에서 아래 사이드뷰에 가려지는 현상 수정 -->
+<!--[if lte IE 7]>
+<script>
+$(function() {
+    var $sv_use = $(".sv_use");
+    var count = $sv_use.length;
+
+    $sv_use.each(function() {
+        $(this).css("z-index", count);
+        $(this).css("position", "relative");
+        count = count - 1;
+    });
+});
+</script>
+<![endif]-->
+
+</body>
+</html>

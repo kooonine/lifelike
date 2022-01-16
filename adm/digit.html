@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        @charset "utf-8";
+
+        /* font */
+        @font-face {
+            font-family: NotoSansKR;
+            font-style: normal;
+            font-weight: 400;
+            src: url(/font/NotoSansKR-Regular.otf);
+            src: url(/font/NotoSansKR-Regular.otf) format("opentype"),
+        }
+
+        @font-face {
+            font-family: NSBold;
+            font-style: normal;
+            font-weight: 700;
+            src: url(/font/NotoSansKR-Bold.otf);
+            src: url(/font/NotoSansKR-Bold.otf) format("opentype"),
+        }
+
+        #price-wrapper-bg {
+            font-family: 'NotoSansKR';
+            position: absolute;
+            left: 372px;
+            top: 240px;
+            background-color: #FFFFFF;
+            height: 500px;
+            width: 420px;
+            padding-top: 14px;
+            font-size: 60px;
+        }
+
+        #price-wrapper {
+            font-family: 'NotoSansKR';
+            position: absolute;
+            left: 372px;
+            top: 240px;
+            height: 500px;
+            width: 420px;
+            padding-top: 14px;
+            font-size: 60px;
+        }
+
+        span {
+            box-sizing: content-box;
+        }
+    </style>
+    <script src="/js/jquery-1.8.3.min.js"></script>
+    <script src="/js/jquery-ui.min.js"></script>
+    <script src="/js/animateNumber/jquery.animateNumber.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <img src="/adm/img/digit_1.png" alt="">
+        <div id="price-wrapper-bg"></div>
+        <div id="price-wrapper" style="text-align: right; width: 322px;">
+            <span class="animate-number" data-start=1 data-loop=1>
+            </span><span>,</span><span class="animate-number" data-start=6 data-loop=1>
+            </span><span class="animate-number" data-start=0 data-loop=1>
+            </span><span class="animate-number" data-start=0 data-loop=1>
+            </span><span>,</span><span class="animate-number" data-start=0 data-loop=1>
+            </span><span class="animate-number" data-start=0 data-loop=1>
+            </span><span class="animate-number" data-start=0 data-loop=1>
+            </span><span id="won">원</span>
+        </div>
+    </div>
+    <script>
+        (function ($) {
+            $.fn.animateNumber = function (o) {
+                const nums = $("<ul><li>1</li><li>2</li><li>3</li><li>4</li><li>5</li><li>6</li><li>7</li><li>8</li><li>9</li><li>0</li></ul>");
+
+                let options = o ? o : {
+                    color: '#000000',
+                    start: 0,
+                    end: 0,
+                    loop: 1,
+                    duration: 1000
+                };
+                this.each(function () {
+                    const start = options.start ? options.start : $(this).data('start');
+                    const end = options.end ? options.end : $(this).data('end');
+                    const loop = options.loop ? options.loop : $(this).data('loop');
+                    const duration = options.duration ? options.duration : $(this).data('duration');
+                    const color = options.color ? options.color : $(this).data('color');
+
+                    $(this).text(start);
+                });
+            };
+        }(jQuery));
+
+        $(".animate-number").animateNumber();
+    </script>
+</body>
+
+</html>

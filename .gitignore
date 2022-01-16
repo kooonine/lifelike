@@ -1,0 +1,7 @@
+data/
+.vscode/
+castle-php/log/
+sftp-config.json
+node_modules
+# sabang/
+.DS_Store

@@ -1,0 +1,196 @@
+#left_cate{
+    display: inline-block;
+    float: left;
+}
+#rigth_list{
+    display: flow-root;
+    
+}
+
+
+.print_table{
+    width : 49%;
+    border: 0px;
+    border-collapse:collapse;
+    font-size: 12px;
+    color : black;
+    margin-top: 8px;
+}
+.print_table tbody.main_body{border: 2px solid black;}
+#print_a4 {
+    height: 842px;
+    width: 700px;
+    /* to centre page on screen*/
+    margin-left: auto;
+    margin-right: auto;
+}
+.print_table tr, .print_table th ,  .print_table td {
+    border: 1px solid black ;
+}
+.print_table tr.noborder, .print_table tr.noborder th ,   .print_table tr.noborder td {
+    border: 0px ;
+}
+
+.print_table tr.borderL {
+    border-left: 1px solid black ;
+}
+.print_table tr.borderR {
+    border-right: 1px solid black ;
+}
+
+.print_table tr{height: 25px;}
+.print_table tr.h50{height: 50px; font-size: 15px;}
+.print_table th{
+    background-color: #e4e2e2 ;
+}
+
+#wrap_table{
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 0px 25px;
+}
+.item_info_t{display: contents;}
+.main_imgs {
+    display: block; width : 100%;margin: auto;
+    height: 100%;
+
+}
+.main_codi{
+    display: block;
+    max-width: 70%;
+    margin: auto;
+    height: 100%;
+
+}
+td.rm_p p {margin: 0px;}
+
+.online_trtd{
+
+}
+
+#main_pf_foto , #codi_pf_foto , #sub_pf_foto ,#memo_img_pf_foto {
+    background-image: url('');
+    background-size: cover;
+    background-position: center;
+    height: 90px;
+    width: 100%;
+    -webkit-print-color-adjust:exact !important;
+    position: relative;
+    cursor: pointer;
+  }
+  
+  #main_pf_foto_img , #codi_pf_foto_img, #sub_pf_foto_img {
+    width:95%;
+    height : 100%;
+  }
+
+  .one_print{float: right; margin: 0;}
+  .line_h30{line-height: 30px;}
+  .chk_box{position: relative;}
+  .chk_{position: absolute;
+    left: 5px;
+    top: 5px;}
+ .main_codi_txt{float: left;}
+ #wrap_table{
+     overflow-y: scroll;
+     height: 800px;
+ }
+ .display_hidden{
+     display: none;
+ }
+
+ #on-content, #off-content{display: none;}
+ 
+ #on-toggle, #off-toggle {cursor: pointer; font-size: 14px; font-weight: bold; color: black;}
+
+@media print { 
+
+    .item_info_t { page-break-after: always !important; }
+
+    .endline{page-break-before:always;}
+
+    body { border:0; margin:0; padding:0 !important; height: 842px; } 
+
+    .print_table{
+        width : 100%;
+        border: 0px;
+        border-collapse:collapse;
+        font-size: 12px;
+        color : black;
+        margin-top: 8px;
+        height: 100%;
+    }
+    .print_table tbody.main_body{border: 2px solid black;}
+    .pring_a4 {
+        height: 842px;
+        width: 700px;
+        /* to centre page on screen*/
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .print_table tr, .print_table th ,  .print_table td {
+        border: 1px solid black ;
+    }
+    .print_table tr.noborder, .print_table tr.noborder th ,   .print_table tr.noborder td {
+        border: 0px ;
+    }
+    
+    .print_table tr.borderL {
+        border-left: 1px solid black ;
+    }
+    .print_table tr.borderR {
+        border-right: 1px solid black ;
+    }
+    
+    .print_table tr{height: 25px;}
+    .print_table tr.h50{height: 50px; font-size: 15px;}
+    .print_table th{
+        background-color: #e4e2e2 ;
+    }
+    
+    #wrap_table{
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        margin: 0px 25px;
+    }
+    /* .item_info_t{display: block;} */
+    .main_imgs {
+        display: block; width : 100%;margin: auto;
+        height: 100%;
+    
+    }
+
+    #main_pf_foto_img , #codi_pf_foto_img, #sub_pf_foto_img,#memo_img_pf_foto_img {
+        width:95% !important;
+        height : 100% !important;
+        
+      }
+
+      .noprint{display: none !important;}
+
+    .main_codi{
+        display: block;
+        max-width: 70%;
+        /* margin: auto; */
+        height: 100px;
+        width: 100px;
+        -webkit-print-color-adjust:exact !important;   
+    }
+    #main_pf_foto , #codi_pf_foto , #sub_pf_foto ,#memo_img_pf_foto {
+        background-image: url('');
+        background-size: cover;
+        background-position: center;
+        height: 90px;
+        width: 100%;
+        -webkit-print-color-adjust:exact !important;
+        position: relative;
+        cursor: pointer;
+    }
+    .main_codi_txt{float: left;}
+    .display_hidden{
+        display: block;
+    }
+      
+}
